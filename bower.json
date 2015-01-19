@@ -1,0 +1,17 @@
+{
+  "name": "e50-editor",
+  "version": "0.0.1",
+  "homepage": "https://github.com/Elite50/e50-filter-bar",
+  "authors": [
+    "JP <jsniezek@crowdskout.com>"
+  ],
+  "description": "AngularJS text editor",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
