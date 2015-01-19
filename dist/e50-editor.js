@@ -1,6 +1,3 @@
-angular.module('e50Editor.tpls', []);
-
-
 angular.module('e50Editor', []);
 // angular.module('e50Editor')
 // .directive('e50FilterBar', function() {

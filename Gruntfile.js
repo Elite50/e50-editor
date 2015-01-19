@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     ngAnnotate: {
       build: {
         files: {
-          'dist/<%= pkg.name %>.js': ['src/tpl/**/*.js','src/**/*.js']
+          'dist/<%= pkg.name %>.js': ['src/**/*.js']
         }
       }
     },
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-ng-annotate');
 
   grunt.registerTask('default', [
-    'html2js',
+    //'html2js',
     'ngAnnotate',
     'uglify'
   ]);
