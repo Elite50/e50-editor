@@ -1,0 +1,7 @@
+.e50-editor .active {
+  color: red; }
+.e50-editor [contenteditable="true"]:focus {
+  outline: none; }
+.e50-editor .header {
+  background-color: black;
+  color: white; }

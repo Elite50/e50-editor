@@ -1,0 +1,15 @@
+<div class="e50-editor">
+  
+  <a href="" ng-click="edit=!edit" class="toggle">
+    <i class="fa fa-edit"></i>
+  </a>
+  
+  <div class="format-buttons" ng-show="edit">
+    <div ng-repeat="group in toolbars">
+      <button type="button" unselectable="on" ng-repeat="button in group" ng-bind-html="name(button)" ng-click="execute(button)" ng-disabled="isDisabled()" tabindex="-1" ng-class="{active:isActive(button)}"></button>
+    </div>
+  </div>
+
+  <div class="live-editor" contenteditable="true" e50-bind ng-model="html"></div>
+
+</div>

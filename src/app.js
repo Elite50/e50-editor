@@ -1,1 +1,1 @@
-angular.module('e50Editor', []);
+angular.module('E50Editor', []);
