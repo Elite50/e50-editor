@@ -19,12 +19,17 @@
 </head>
 <body ng-app="app">
 
+  <div contenteditable="true">Editable</div>
+
   <div class="container" ng-controller="MainCtrl">
-    <div e50-editor ng-model="headerHtml" e50-tools="[['h1','h2', 'h3', 'h4', 'h5']]" class="header"></div>
+    <div e50-editor ng-model="headerHtml" e50-tools="[['h1','h2', 'h3', 'h4', 'h5']]" class="header">
+      <h3>Initial html</h3>
+    </div>
     <div e50-editor ng-model="contentHtml" e50-tools="[['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'placeholder']]" class="content"></div>
     <div e50-editor ng-model="footerHtml" e50-tools="[['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight']]" class="footer"></div>
   </div>
 
   <script src="http://localhost:1337/livereload.js"></script>
+
 </body>
 </html>

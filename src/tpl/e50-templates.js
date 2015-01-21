@@ -14,7 +14,7 @@ angular.module("views/e50-editor.tpl.html", []).run(["$templateCache", function(
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <div class=\"live-editor\" contenteditable=\"true\" e50-bind ng-model=\"html\"></div>\n" +
+    "  <div class=\"live-editor\" contenteditable=\"true\" e50-bind ng-model=\"html\" ng-transclude=\"\"></div>\n" +
     "\n" +
     "</div>");
 }]);

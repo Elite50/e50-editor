@@ -5,11 +5,13 @@ angular.module('E50Editor')
     restrict: 'EA',
     replace:true,
     templateUrl: '/src/views/e50-editor.tpl.html',
+    transclude: true,
+    require: 'ngModel',
     scope: {
       html: '=ngModel',
       tools: '=?e50Tools'
     },
-    link: function(scope, elm) {
+    link: function(scope, elm, attrs, ngModel) {
 
       scope.focused = false;
       scope.toolbars = scope.tools || E50DefaultToolbar;

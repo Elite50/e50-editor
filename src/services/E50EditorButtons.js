@@ -9,7 +9,7 @@ angular.module('E50Editor')
    * { 
    *    name:string;
    *    execute():void;
-   *    isActive():boolean; 
+   *    isActive():boolean;
    *  }
    */
 
@@ -69,26 +69,31 @@ angular.module('E50Editor')
     };
   }
 
-  return {
-    'h1'           : new FormatCommand('h1'),
-    'h2'           : new FormatCommand('h2'),
-    'h3'           : new FormatCommand('h3'),
-    'h4'           : new FormatCommand('h4'),
-    'h5'           : new FormatCommand('h5'),
-    'h6'           : new FormatCommand('h6'),
-    'p'            : new FormatCommand('p'),
-    'pre'          : new FormatCommand('pre'),
-    'blockquote'   : new FormatCommand('blockquote'),
-    'bold'         : new StyleCommand('bold'),
-    'italic'       : new StyleCommand('italic'),
-    'underline'    : new StyleCommand('underline'),
-    'justifyLeft'  : new StyleCommand('justifyLeft'),
-    'justifyCenter': new StyleCommand('justifyCenter'),
-    'justifyRight' : new StyleCommand('justifyRight'),
-    'link'         : new LinkCommand(),
-    'image'        : new ImageCommand(),
-    'placeholder'  : new InsertCommand('placeholder', '<img src="placeholder.png" class="placeholder" alt="Placeholder"/>'),
-    'insertOrderedList'   : new StyleCommand('insertOrderedList'),
-    'insertUnorderedList' : new StyleCommand('insertUnorderedList')
-  };  
+  var formats = ['h1','h2','h3','h4','h5','h6','p','pre','blockquote'];
+  var styles  = ['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'insertOrderedList', 'insertUnorderedList'];
+  var buttons = {};
+
+  formats.forEach(function(format) {
+    buttons[format] = new FormatCommand(format);
+  });
+
+  styles.forEach(function(style) {
+    buttons[style] = new StyleCommand(style);
+  });
+
+  buttons['image'] = new ImageCommand();
+  buttons['placeholder'] = new InsertCommand('placeholder', '<img src="placeholder.png" class="placeholder" alt="Placeholder"/>');
+  buttons['link'] = new LinkCommand();
+
+  buttons.factory = function(command) {
+    var commands = {
+      FormatCommand: FormatCommand,
+      StyleCommand: StyleCommand,
+      InsertCommand: InsertCommand,
+      LinkCommand: LinkCommand,
+      ImageCommand: ImageCommand
+    };
+    return commands[command] !== "undefined" ? commands[command] : false;
+  };
+  return buttons;
 });

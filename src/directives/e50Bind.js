@@ -39,6 +39,7 @@ angular.module('E50Editor')
         e.stopPropagation();
         elm.addClass('drag-over');
       });
+
       elm.bind('dragleave', function(e) {
         e.preventDefault();
         e.stopPropagation();
