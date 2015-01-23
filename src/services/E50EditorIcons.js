@@ -11,7 +11,8 @@ angular.module('E50Editor')
     'justifyRight': 'fa-align-right',
     'insertOrderedList': 'fa-list-ol',
     'insertUnorderedList': 'fa-list-ul',
-    'placeholder': 'fa-image'
+    'placeholder': 'fa-image',
+    'link': 'fa-link'
   };
 
   function icon(className) {

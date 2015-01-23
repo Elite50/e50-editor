@@ -1,8 +1,12 @@
 var app = angular.module('app', ['E50Editor', 'ngSanitize', 'textAngular']);
 app.controller('MainCtrl', function($scope, $http) {
-  $scope.headerHtml  = '<h3>Header html</h3>';
-  $scope.footerHtml  = '<p>&copy; Copyright 2015</p>';
-  $scope.contentHtml = "";
+
+  $scope.buttons = {};
+
+  // Fetch template
+  $http.get('template.tpl.html').success(function(tpl) {
+    $scope.tplHtml = tpl;
+  });
 
   // Bacon ipsum text
   $http.get('http://baconipsum.com/api/?type=meat-and-filler&paras=4').success(function(res) {
@@ -14,7 +18,7 @@ app.controller('MainCtrl', function($scope, $http) {
     });
   });
 
-  $scope.done = function() {
-    console.log($scope.headerHtml + $scope.contentHtml);
+  $scope.logHtml = function() {
+    console.log($scope.tplHtml);
   };
 });

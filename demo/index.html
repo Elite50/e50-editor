@@ -19,14 +19,16 @@
 </head>
 <body ng-app="app">
 
-  <div contenteditable="true">Editable</div>
+  <div ng-controller="MainCtrl">
+    <p style="text-align:center;">
+      <a href="" ng-click="showHtml=!showHtml" class="show-html">Show {{showHtml ? 'live' : 'html'}}</a>
+    </p>
 
-  <div class="container" ng-controller="MainCtrl">
-    <div e50-editor ng-model="headerHtml" e50-tools="[['h1','h2', 'h3', 'h4', 'h5']]" class="header">
-      <h3>Initial html</h3>
+    <div class="container">
+      <div e50-toolbars buttons="buttons"></div>
+      <div class="template" e50-template ng-model="tplHtml" buttons="buttons" ng-show="!showHtml"></div>
+      <textarea ng-model="tplHtml" ng-show="showHtml"></textarea>
     </div>
-    <div e50-editor ng-model="contentHtml" e50-tools="[['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'placeholder']]" class="content"></div>
-    <div e50-editor ng-model="footerHtml" e50-tools="[['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight']]" class="footer"></div>
   </div>
 
   <script src="http://localhost:1337/livereload.js"></script>

@@ -81,17 +81,18 @@ angular.module('E50Editor')
     buttons[style] = new StyleCommand(style);
   });
 
-  buttons['image'] = new ImageCommand();
+  buttons['image']       = new ImageCommand();
   buttons['placeholder'] = new InsertCommand('placeholder', '<img src="placeholder.png" class="placeholder" alt="Placeholder"/>');
-  buttons['link'] = new LinkCommand();
+  buttons['link']        = new LinkCommand();
 
+  // Expose the commands, so ppl can add there own later
   buttons.factory = function(command) {
     var commands = {
-      FormatCommand: FormatCommand,
-      StyleCommand: StyleCommand,
-      InsertCommand: InsertCommand,
-      LinkCommand: LinkCommand,
-      ImageCommand: ImageCommand
+      FormatCommand : FormatCommand,
+      StyleCommand  : StyleCommand,
+      InsertCommand : InsertCommand,
+      LinkCommand   : LinkCommand,
+      ImageCommand  : ImageCommand
     };
     return commands[command] !== "undefined" ? commands[command] : false;
   };

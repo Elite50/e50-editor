@@ -54,7 +54,7 @@ angular.module('E50Editor')
       // Is the button disabled
       scope.isDisabled = function() {
         return !scope.focused;
-      }
+      };
     }
   };
 });
