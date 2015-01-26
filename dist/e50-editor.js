@@ -1,98 +1,10 @@
 angular.module('E50Editor', []);
 angular.module('E50Editor')
-.directive('e50Bind', ["$timeout", "$document", "taSelection", function($timeout, $document, taSelection) {
-  return {
-    require: 'ngModel',
-    link: function(scope, elm , attr, ngModel) {
-
-      // Is this a contenteditable div?
-      var isEditable = elm.attr('contenteditable');
-
-      // Whenever the model changes, update the html
-      ngModel.$render = function () {
-        elm.html(ngModel.$viewValue);
-      };
-
-      // On keyup, update the model
-      if (isEditable) {
-        elm.bind('keyup', function () {
-          ngModel.$setViewValue(elm.html());
-          scope.$apply();
-        });
-
-        elm.bind('mouseup', function() {
-          scope.$apply();
-        });
-      }
-
-      // Watch for focus event
-      elm.bind('focus', function() {
-        elm.addClass('focused');
-        $timeout(function() {
-          scope.focused = true;
-          scope.edit = true;
-        });
-      });
-
-      // Toggle drag-over class
-      elm.bind('dragover', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        elm.addClass('drag-over');
-      });
-
-      elm.bind('dragleave', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        elm.removeClass('drag-over');
-      });
-
-      // Insert the image on drop, and update the viewValue
-      var dropHandler = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var target = angular.element(e.target);
-        if(target.hasClass('placeholder')) {
-          taSelection.setSelectionToElementStart(e.target);
-          target.remove();
-        }
-
-        var dataTransfer = e.originalEvent.dataTransfer;
-
-        angular.forEach(dataTransfer.files, function(file) {
-          // New file reader to load the dropped file
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            $document[0].execCommand('insertImage', false, e.target.result);
-            elm.removeClass('drag-over');
-            ngModel.$setViewValue(elm.html());
-            scope.$apply();
-          };
-
-          reader.readAsDataURL(file);
-        });
-
-
-        return false;
-      };
-
-      // Watch for drop event
-      elm.bind('drop', dropHandler);
-
-      // Unbind our drop events when the scope is destroyed
-      scope.$on('$destroy', function() {
-        elm.unbind("drop", dropHandler);
-      });
-
-    }
-  };
-}]);
-angular.module('E50Editor')
 .directive('e50Editor', function() {
 
   var template = [
     '<div e50-toolbars buttons="buttons"></div>',
-    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle"></div>',
+    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle" document="document"></div>',
     '<textarea ng-model="html" ng-show="toggle"></textarea>'
   ];
 
@@ -102,17 +14,19 @@ angular.module('E50Editor')
     scope: {
       html: '=ngModel',
       buttons: "=?",
-      toggle: "=?"
+      toggle: "=?",
+      document: "=?"
     }
   };
 });
 angular.module('E50Editor')
-.directive('e50Template', ["taSelection", "$document", "$timeout", function(taSelection, $document, $timeout) {
+.directive('e50Template', ["taSelection", "$document", function(taSelection, $document) {
   return {
     require: 'ngModel',
     scope: {
       html: "=ngModel",
-      buttons: "="
+      buttons: "=",
+      document: "=?"
     },
     link: function(scope, elm, attrs, ngModel) {
 
@@ -156,7 +70,7 @@ angular.module('E50Editor')
       });
 
       // Document reference
-      var doc = angular.element(document);
+      var doc = angular.element(scope.document || document);
 
       // On mousedown, toggle focused property for each editable area
       function mouseDownHandler(e) {
@@ -262,7 +176,7 @@ angular.module('E50Editor')
 
           // On load, insert the image, update the view value, and sync
           reader.onload = function(e) {
-            $document[0].execCommand('insertImage', false, e.target.result);
+            doc.execCommand('insertImage', false, e.target.result);
             elm.removeClass('drag-over');
             ngModel.$setViewValue(elm.html());
             scope.$apply();
@@ -323,15 +237,6 @@ angular.module('E50Editor')
   };
 
 }]);
-angular.module('E50Editor')
-.factory('E50DefaultToolbar', function() {
-  // These are all keys that map to E50EditorButtons
-  return [
-    ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'blockquote'],
-    ['insertOrderedList', 'insertUnorderedList'],
-    ['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight']
-  ];
-});
 angular.module('E50Editor')
 .factory('E50EditorButtons', ["E50ExecCommand", "taBrowserTag", "taSelection", function(E50ExecCommand, taBrowserTag, taSelection) {
   
