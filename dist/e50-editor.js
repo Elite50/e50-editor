@@ -176,7 +176,7 @@ angular.module('E50Editor')
 
           // On load, insert the image, update the view value, and sync
           reader.onload = function(e) {
-            doc.execCommand('insertImage', false, e.target.result);
+            doc[0].execCommand('insertImage', false, e.target.result);
             elm.removeClass('drag-over');
             ngModel.$setViewValue(elm.html());
             scope.$apply();
