@@ -1,10 +1,11 @@
 angular.module('E50Editor')
-.directive('e50Template', function(taSelection, $document, $timeout) {
+.directive('e50Template', function(taSelection, $document) {
   return {
     require: 'ngModel',
     scope: {
       html: "=ngModel",
-      buttons: "="
+      buttons: "=",
+      document: "=?"
     },
     link: function(scope, elm, attrs, ngModel) {
 
@@ -48,7 +49,7 @@ angular.module('E50Editor')
       });
 
       // Document reference
-      var doc = angular.element(document);
+      var doc = angular.element(scope.document || document);
 
       // On mousedown, toggle focused property for each editable area
       function mouseDownHandler(e) {
@@ -154,7 +155,7 @@ angular.module('E50Editor')
 
           // On load, insert the image, update the view value, and sync
           reader.onload = function(e) {
-            $document[0].execCommand('insertImage', false, e.target.result);
+            doc.execCommand('insertImage', false, e.target.result);
             elm.removeClass('drag-over');
             ngModel.$setViewValue(elm.html());
             scope.$apply();
