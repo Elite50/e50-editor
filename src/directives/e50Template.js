@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.directive('e50Template', function(taSelection, $document) {
+.directive('e50Template', function(taSelection) {
   return {
     require: 'ngModel',
     scope: {

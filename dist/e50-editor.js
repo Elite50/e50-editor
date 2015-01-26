@@ -20,7 +20,7 @@ angular.module('E50Editor')
   };
 });
 angular.module('E50Editor')
-.directive('e50Template', ["taSelection", "$document", function(taSelection, $document) {
+.directive('e50Template', ["taSelection", function(taSelection) {
   return {
     require: 'ngModel',
     scope: {
