@@ -1,4 +1,4 @@
-angular.module('E50Editor', []);
+angular.module('E50Editor', ['textAngular', 'ngSanitize']);
 angular.module('E50Editor')
 .directive('e50Editor', function() {
 
