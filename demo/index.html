@@ -20,15 +20,15 @@
 <body ng-app="app">
 
   <div ng-controller="MainCtrl">
+
     <p style="text-align:center;">
       <a href="" ng-click="showHtml=!showHtml" class="show-html">Show {{showHtml ? 'live' : 'html'}}</a>
     </p>
 
     <div class="container">
-      <div e50-toolbars buttons="buttons"></div>
-      <div class="template" e50-template ng-model="tplHtml" buttons="buttons" ng-show="!showHtml"></div>
-      <textarea ng-model="tplHtml" ng-show="showHtml"></textarea>
+      <div e50-editor ng-model="tplHtml" toggle="showHtml"></div>
     </div>
+
   </div>
 
   <script src="http://localhost:1337/livereload.js"></script>
