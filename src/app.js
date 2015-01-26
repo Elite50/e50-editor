@@ -1,1 +1,1 @@
-angular.module('E50Editor', []);
+angular.module('E50Editor', ['textAngular', 'ngSanitize']);
