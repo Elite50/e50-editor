@@ -1,7 +1,7 @@
 {
   "name": "e50-editor",
-  "version": "0.0.1",
-  "homepage": "https://github.com/Elite50/e50-filter-bar",
+  "version": "0.1.0",
+  "homepage": "https://github.com/Elite50/e50-editor",
   "authors": [
     "JP <jsniezek@crowdskout.com>"
   ],
@@ -21,3 +21,5 @@
     "font-awesome": "~4.2.0"
   }
 }
+
+git://github.com/Elite50/e50-editor.git
