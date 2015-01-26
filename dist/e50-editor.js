@@ -234,10 +234,13 @@ angular.module('E50Editor')
         e.stopPropagation();
 
         var target = angular.element(e.target);
+        var editable = target.closest('[editable]');
 
         // Set the caret position to the start of the placeholder
         if(target.hasClass('placeholder')) {
           taSelection.setSelectionToElementStart(e.target);
+        } else {
+          taSelection.setSelectionToElementEnd(e.target);
         }
 
         var dataTransfer = e.originalEvent.dataTransfer;
@@ -252,17 +255,19 @@ angular.module('E50Editor')
             return;
           }
 
-          // Remove the placeholder, after we know it's an image
-          if(target.hasClass('placeholder')) {
-            target.remove();
-          }
-
           // New file reader to load the dropped file
           var reader = new FileReader();
 
           // On load, insert the image, update the view value, and sync
           reader.onload = function(e) {
-            $document[0].execCommand('insertImage', false, e.target.result);
+            if(target.hasClass('placeholder')) {
+              target.attr('src', e.target.result);
+              target.removeClass('placeholder');
+            } else {
+              var img = new Image();
+              img.src =  e.target.result;
+
+            }
             elm.removeClass('drag-over');
             ngModel.$setViewValue(elm.html());
             scope.$apply();
