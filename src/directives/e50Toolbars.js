@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.directive('e50Toolbars', function(E50EditorButtons, E50EditorIcons) {
+.directive('e50Toolbars', function(E50EditorButtons, E50EditorIcons, $document) {
 
   var template = [
     '<div class="toolbars">',
@@ -11,10 +11,18 @@ angular.module('E50Editor')
 
   return {
     scope: {
-      buttons: "="
+      buttons: "=",
+      document: "=?"
     },
     template: template.join(''),
     link: function(scope) {
+
+      // Support for multiple documents, ie iframes
+      function command(tag) {
+        var _command = E50EditorButtons[tag];
+        _command.setDocument(scope.document || $document[0]);
+        return _command;
+      }
 
       // Get the name of the button, if there's no icon for it
       scope.name = function(tag) {
@@ -24,12 +32,12 @@ angular.module('E50Editor')
 
       // Is the current button active
       scope.isActive = function(tag) {
-        return E50EditorButtons[tag].isActive();
+        return command(tag).isActive();
       };
 
       // Execute the button
       scope.execute = function(tag) {
-        return E50EditorButtons[tag].execute();
+        return command(tag).execute();
       };
     }
   };

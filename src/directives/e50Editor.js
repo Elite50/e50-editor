@@ -2,8 +2,8 @@ angular.module('E50Editor')
 .directive('e50Editor', function() {
 
   var template = [
-    '<div e50-toolbars buttons="buttons"></div>',
-    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle"></div>',
+    '<div e50-toolbars buttons="buttons" document="document"></div>',
+    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle" document="document"></div>',
     '<textarea ng-model="html" ng-show="toggle"></textarea>'
   ];
 
@@ -13,7 +13,8 @@ angular.module('E50Editor')
     scope: {
       html: '=ngModel',
       buttons: "=?",
-      toggle: "=?"
+      toggle: "=?",
+      document: "=?"
     }
   };
 });

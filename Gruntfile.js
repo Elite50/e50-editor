@@ -32,7 +32,8 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'dist/e50-editor.css':'src/scss/e50-editor.scss',
-          'demo/demo.css': 'demo/demo.scss'
+          'demo/demo.css': 'demo/demo.scss',
+          'demo/template.css': 'demo/template.scss'
         }
       },
       demo: {

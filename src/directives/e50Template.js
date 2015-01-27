@@ -4,7 +4,8 @@ angular.module('E50Editor')
     require: 'ngModel',
     scope: {
       html: "=ngModel",
-      buttons: "="
+      buttons: "=",
+      document: "=?"
     },
     link: function(scope, elm, attrs, ngModel) {
 
@@ -47,9 +48,6 @@ angular.module('E50Editor')
         getButtons();
       });
 
-      // Document reference
-      var doc = angular.element(document);
-
       // On mousedown, toggle focused property for each editable area
       function mouseDownHandler(e) {
         var target = $(e.target);
@@ -78,16 +76,33 @@ angular.module('E50Editor')
         scope.$apply();
       }
 
+      // Document reference
+      var doc = angular.element(scope.document || document);
+      var isIframe = doc[0] !== document;
+      if(isIframe) {
+        var parentDoc = angular.element(document);
+      }
+
       // Apply mouse down handler
       doc.bind('mousedown', mouseDownHandler);
 
       // On mouse, scope apply the changes. We need this to update the active toolbar buttons
       doc.bind('mouseup', scope.$apply.bind(scope));
 
+      // We need to add mouse event handlers to the parentDocument, if we are in an iframe
+      if(isIframe) {
+        parentDoc.bind('mousedown', mouseDownHandler);
+        parentDoc.bind('mouseup', scope.$apply.bind(scope));
+      }
+
       // Unbind event watchers on the document when the scope is destroyed
       scope.$on('$destroy', function() {
         doc.unbind('mousedown', mouseDownHandler);
         doc.unbind('mouseup', scope.$apply.bind(scope));
+        if(isIframe) {
+          parentDoc.unbind('mousedown', mouseDownHandler);
+          parentDoc.unbind('mouseup', scope.$apply.bind(scope));
+        }
       });
 
       // When the model changes, update the view
@@ -130,9 +145,9 @@ angular.module('E50Editor')
 
         // Set the caret position to the start of the placeholder
         if(target.hasClass('placeholder')) {
-          taSelection.setSelectionToElementStart(e.target);
-        } else {
-          taSelection.setSelectionToElementEnd(e.target);
+          var iframeDoc = isIframe ? doc : parentDoc;
+          var sel = taSelection(iframeDoc);
+          sel.setSelectionToElementStart(e.target);
         }
 
         var dataTransfer = e.originalEvent.dataTransfer;
@@ -147,7 +162,7 @@ angular.module('E50Editor')
             return;
           }
 
-          // New file reader to load the dropped file
+          // New file reader to read the dropped file
           var reader = new FileReader();
 
           // On load, insert the image, update the view value, and sync

@@ -1,8 +1,5 @@
 angular.module('E50Editor')
-.factory('E50EditorButtons', function(E50ExecCommand, taBrowserTag, taSelection) {
-  
-  // alias
-  var execCommand = E50ExecCommand;
+.factory('E50EditorButtons', function(taBrowserTag, taSelection, taExecCommand) {
 
   /**
    * Each command must implement the given interface 
@@ -10,63 +7,82 @@ angular.module('E50Editor')
    *    name:string;
    *    execute():void;
    *    isActive():boolean;
+   *    setDocument(document):void;
    *  }
    */
+
+  function setDocument(document) {
+    this.document = document;
+  }
 
   // This wraps the selection around the given tag
   function FormatCommand(tag) {
     this.name = tag;
     this.isActive = function() {
-      return document.queryCommandValue('formatBlock').toLowerCase() === tag;
+      return this.document.queryCommandValue('formatBlock').toLowerCase() === tag;
     };
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       execCommand('formatBlock', false, '<'+taBrowserTag(tag)+'>');
     };
+    this.setDocument = setDocument;
   }
 
   // This executes the given style command, ie 'bold' or 'italic'
   function StyleCommand(tag) {
     this.name = tag;
     this.isActive = function() {
-      return document.queryCommandState(tag);
+      return this.document.queryCommandState(tag);
     };
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       execCommand(tag);
     };
+    this.setDocument = setDocument;
   }
 
   // This inserts an image at the given cursor position
   function ImageCommand() {
     this.name = "image";
     this.isActive = function() {
-      var elm = taSelection.getSelectionElement();
+      if(!this.document) { return false; }
+      var selection = taSelection(this.document);
+      var elm = selection.getSelectionElement();
       return elm.tagName === 'IMG';
     };
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       var url = window.prompt('Image url', 'http://');
-      $document[0].execCommand('insertImage', false, url);
+      execCommand('insertImage', false, url);
     };
+    this.setDocument = setDocument;
   }
 
   // This inserts custom html at the given cursor position
   function InsertCommand(tag, html) {
     this.name = tag;
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       execCommand('insertHTML', false, html);
     };
     this.isActive = angular.noop;
+    this.setDocument = setDocument;
   }
 
   // Creates a link
   function LinkCommand() {
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       var url = window.prompt('Link?', 'http://');
       execCommand('createLink', false, url);      
     };
     this.isActive = function() {
-      var elm = taSelection.getSelectionElement();
+      if(!this.document) { return false; }
+      var selection = taSelection(this.document);
+      var elm = selection.getSelectionElement();
       return $(elm).closest('a').length;      
     };
+    this.setDocument = setDocument;
   }
 
   var formats = ['h1','h2','h3','h4','h5','h6','p','pre','blockquote'];

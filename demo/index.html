@@ -11,9 +11,9 @@
   <script src="../bower_components/angular/angular.js"></script>
   <script src="../bower_components/rangy/rangy-core.js"></script>
   <script src="../bower_components/rangy/rangy-selectionsaverestore.js"></script>
-  <script src="../bower_components/textAngular/src/textAngular.js"></script>
-  <script src="../bower_components/textAngular/src/textAngularSetup.js"></script>
-  <script src="../bower_components/textAngular/src/textAngular-sanitize.js"></script>
+  <script src="../bower_components/text-angular-iframe/src/textAngular.js"></script>
+  <script src="../bower_components/text-angular-iframe/src/textAngularSetup.js"></script>
+  <script src="../bower_components/text-angular-iframe/src/textAngular-sanitize.js"></script>
   
   <script src="../dist/e50-editor.js"></script>
 
@@ -28,7 +28,8 @@
     </p>
 
     <div class="container">
-      <div e50-editor ng-model="tplHtml" toggle="showHtml"></div>
+      <!--<div e50-editor ng-model="tplHtml" toggle="showHtml"></div>-->
+      <div e50-iframe ng-model="tplHtml" toggle="showHtml"></div>
     </div>
 
   </div>

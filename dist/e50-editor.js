@@ -3,8 +3,8 @@ angular.module('E50Editor')
 .directive('e50Editor', function() {
 
   var template = [
-    '<div e50-toolbars buttons="buttons"></div>',
-    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle"></div>',
+    '<div e50-toolbars buttons="buttons" document="document"></div>',
+    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle" document="document"></div>',
     '<textarea ng-model="html" ng-show="toggle"></textarea>'
   ];
 
@@ -14,17 +14,60 @@ angular.module('E50Editor')
     scope: {
       html: '=ngModel',
       buttons: "=?",
-      toggle: "=?"
+      toggle: "=?",
+      document: "=?"
     }
   };
 });
+angular.module('E50Editor')
+  .directive('e50Iframe', ["$compile", function($compile) {
+    return {
+      scope: {
+        html: '=ngModel',
+        toggle: "=?",
+        buttons: "=?",
+        template: "=?"
+      },
+      link: function(scope, elm) {
+        scope.template = scope.template || 'iframe-template.tpl.html';
+
+        // Allow the ability to pass in a template url
+        var iframeElm = angular.element('<iframe src="{{template}}"/>');
+        var iframe = $compile(iframeElm)(scope);
+
+        // Attach the iframe
+        elm.html(iframe);
+
+        // The iframe is using the src tag, so we need to wait until it loads
+        iframe[0].onload = function() {
+          var body = iframe.contents().find('body');
+
+          // Grab the iframe's document, so we can use execCommand and other contenteditable commands
+          scope.document = iframe[0].contentDocument || iframe[0].contentWindow.document;
+
+          // Compile and append the e50-editor directive
+          var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="document">initial editable content</div>';
+          var directiveElm = $compile(directive)(scope);
+          body.append(directiveElm);
+
+          // This will resize the iframe's height to it's html height.
+          var html = angular.element(scope.html);
+          var images = html.find('img');
+          images.on('load', function() {
+            iframe.height(iframe.contents().find('html').height());
+          });
+        }
+      }
+    };
+  }]);
 angular.module('E50Editor')
 .directive('e50Template', ["taSelection", "$document", "$timeout", function(taSelection, $document, $timeout) {
   return {
     require: 'ngModel',
     scope: {
       html: "=ngModel",
-      buttons: "="
+      buttons: "=",
+      document: "=?"
     },
     link: function(scope, elm, attrs, ngModel) {
 
@@ -67,9 +110,6 @@ angular.module('E50Editor')
         getButtons();
       });
 
-      // Document reference
-      var doc = angular.element(document);
-
       // On mousedown, toggle focused property for each editable area
       function mouseDownHandler(e) {
         var target = $(e.target);
@@ -98,16 +138,33 @@ angular.module('E50Editor')
         scope.$apply();
       }
 
+      // Document reference
+      var doc = angular.element(scope.document || document);
+      var isIframe = doc[0] !== document;
+      if(isIframe) {
+        var parentDoc = angular.element(document);
+      }
+
       // Apply mouse down handler
       doc.bind('mousedown', mouseDownHandler);
 
       // On mouse, scope apply the changes. We need this to update the active toolbar buttons
       doc.bind('mouseup', scope.$apply.bind(scope));
 
+      // We need to add mouse event handlers to the parentDocument, if we are in an iframe
+      if(isIframe) {
+        parentDoc.bind('mousedown', mouseDownHandler);
+        parentDoc.bind('mouseup', scope.$apply.bind(scope));
+      }
+
       // Unbind event watchers on the document when the scope is destroyed
       scope.$on('$destroy', function() {
         doc.unbind('mousedown', mouseDownHandler);
         doc.unbind('mouseup', scope.$apply.bind(scope));
+        if(isIframe) {
+          parentDoc.unbind('mousedown', mouseDownHandler);
+          parentDoc.unbind('mouseup', scope.$apply.bind(scope));
+        }
       });
 
       // When the model changes, update the view
@@ -150,9 +207,9 @@ angular.module('E50Editor')
 
         // Set the caret position to the start of the placeholder
         if(target.hasClass('placeholder')) {
-          taSelection.setSelectionToElementStart(e.target);
-        } else {
-          taSelection.setSelectionToElementEnd(e.target);
+          var iframeDoc = isIframe ? doc : parentDoc;
+          var sel = taSelection(iframeDoc);
+          sel.setSelectionToElementStart(e.target);
         }
 
         var dataTransfer = e.originalEvent.dataTransfer;
@@ -167,7 +224,7 @@ angular.module('E50Editor')
             return;
           }
 
-          // New file reader to load the dropped file
+          // New file reader to read the dropped file
           var reader = new FileReader();
 
           // On load, insert the image, update the view value, and sync
@@ -204,7 +261,7 @@ angular.module('E50Editor')
   };
 }]);
 angular.module('E50Editor')
-.directive('e50Toolbars', ["E50EditorButtons", "E50EditorIcons", function(E50EditorButtons, E50EditorIcons) {
+.directive('e50Toolbars', ["E50EditorButtons", "E50EditorIcons", "$document", function(E50EditorButtons, E50EditorIcons, $document) {
 
   var template = [
     '<div class="toolbars">',
@@ -216,10 +273,18 @@ angular.module('E50Editor')
 
   return {
     scope: {
-      buttons: "="
+      buttons: "=",
+      document: "=?"
     },
     template: template.join(''),
     link: function(scope) {
+
+      // Support for multiple documents, ie iframes
+      function command(tag) {
+        var _command = E50EditorButtons[tag];
+        _command.setDocument(scope.document || $document[0]);
+        return _command;
+      }
 
       // Get the name of the button, if there's no icon for it
       scope.name = function(tag) {
@@ -229,22 +294,19 @@ angular.module('E50Editor')
 
       // Is the current button active
       scope.isActive = function(tag) {
-        return E50EditorButtons[tag].isActive();
+        return command(tag).isActive();
       };
 
       // Execute the button
       scope.execute = function(tag) {
-        return E50EditorButtons[tag].execute();
+        return command(tag).execute();
       };
     }
   };
 
 }]);
 angular.module('E50Editor')
-.factory('E50EditorButtons', ["E50ExecCommand", "taBrowserTag", "taSelection", function(E50ExecCommand, taBrowserTag, taSelection) {
-  
-  // alias
-  var execCommand = E50ExecCommand;
+.factory('E50EditorButtons', ["taBrowserTag", "taSelection", "taExecCommand", function(taBrowserTag, taSelection, taExecCommand) {
 
   /**
    * Each command must implement the given interface 
@@ -252,63 +314,82 @@ angular.module('E50Editor')
    *    name:string;
    *    execute():void;
    *    isActive():boolean;
+   *    setDocument(document):void;
    *  }
    */
+
+  function setDocument(document) {
+    this.document = document;
+  }
 
   // This wraps the selection around the given tag
   function FormatCommand(tag) {
     this.name = tag;
     this.isActive = function() {
-      return document.queryCommandValue('formatBlock').toLowerCase() === tag;
+      return this.document.queryCommandValue('formatBlock').toLowerCase() === tag;
     };
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       execCommand('formatBlock', false, '<'+taBrowserTag(tag)+'>');
     };
+    this.setDocument = setDocument;
   }
 
   // This executes the given style command, ie 'bold' or 'italic'
   function StyleCommand(tag) {
     this.name = tag;
     this.isActive = function() {
-      return document.queryCommandState(tag);
+      return this.document.queryCommandState(tag);
     };
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       execCommand(tag);
     };
+    this.setDocument = setDocument;
   }
 
   // This inserts an image at the given cursor position
   function ImageCommand() {
     this.name = "image";
     this.isActive = function() {
-      var elm = taSelection.getSelectionElement();
+      if(!this.document) { return false; }
+      var selection = taSelection(this.document);
+      var elm = selection.getSelectionElement();
       return elm.tagName === 'IMG';
     };
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       var url = window.prompt('Image url', 'http://');
-      $document[0].execCommand('insertImage', false, url);
+      execCommand('insertImage', false, url);
     };
+    this.setDocument = setDocument;
   }
 
   // This inserts custom html at the given cursor position
   function InsertCommand(tag, html) {
     this.name = tag;
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       execCommand('insertHTML', false, html);
     };
     this.isActive = angular.noop;
+    this.setDocument = setDocument;
   }
 
   // Creates a link
   function LinkCommand() {
     this.execute = function() {
+      var execCommand = taExecCommand(this.document)('p');
       var url = window.prompt('Link?', 'http://');
       execCommand('createLink', false, url);      
     };
     this.isActive = function() {
-      var elm = taSelection.getSelectionElement();
+      if(!this.document) { return false; }
+      var selection = taSelection(this.document);
+      var elm = selection.getSelectionElement();
       return $(elm).closest('a').length;      
     };
+    this.setDocument = setDocument;
   }
 
   var formats = ['h1','h2','h3','h4','h5','h6','p','pre','blockquote'];
