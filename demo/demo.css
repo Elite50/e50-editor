@@ -7,7 +7,7 @@ body {
   outline: none; }
 
 .container {
-  width: 500px;
+  width: 700px;
   margin: 0 auto;
   background-color: white;
   border: 1px solid #f3f3f3; }
@@ -101,3 +101,7 @@ button {
     cursor: pointer; }
   button.active {
     background-color: #00aeef; }
+
+iframe {
+  width: 100%;
+  border: 2px solid lightgray; }
