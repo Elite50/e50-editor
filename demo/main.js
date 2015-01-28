@@ -1,6 +1,7 @@
 var app = angular.module('app', ['E50Editor', 'ngSanitize', 'textAngular']);
 app.controller('MainCtrl', function($scope, $http) {
 
+  $scope.iframeId = "iframe1";
   $scope.buttons = {};
 
   // Fetch template
@@ -21,4 +22,10 @@ app.controller('MainCtrl', function($scope, $http) {
   $scope.logHtml = function() {
     console.log($scope.tplHtml);
   };
+
+  $scope.$on('e50Document', function($event, name, document) {
+    if(name === $scope.iframeId) {
+      $scope.document = document;
+    }
+  });
 });

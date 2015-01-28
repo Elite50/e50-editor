@@ -2,7 +2,7 @@ angular.module('E50Editor')
 .directive('e50Toolbars', function(E50EditorButtons, E50EditorIcons, $document) {
 
   var template = [
-    '<div class="toolbars">',
+    '<div class="toolbars" ng-if="!override">',
       '<div class="group" ng-repeat="(key,editable) in buttons" ng-show="editable.focused">',
         '<button type="button" unselectable="on" ng-repeat="btn in editable.buttons" class="format-button" ng-click="execute(btn)" ng-bind-html="name(btn)" ng-class="{active:isActive(btn)}"></button>',
       '</div>',
@@ -12,7 +12,8 @@ angular.module('E50Editor')
   return {
     scope: {
       buttons: "=",
-      document: "=?"
+      document: "=?",
+      override: "=?"
     },
     template: template.join(''),
     link: function(scope) {

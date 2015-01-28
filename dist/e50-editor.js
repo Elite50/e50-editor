@@ -3,9 +3,9 @@ angular.module('E50Editor')
 .directive('e50Editor', function() {
 
   var template = [
-    '<div e50-toolbars buttons="buttons" document="document"></div>',
+    '<div e50-toolbars buttons="buttons" document="document" override="override"></div>',
     '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle" document="document"></div>',
-    '<textarea ng-model="html" ng-show="toggle"></textarea>'
+    '<textarea ng-model="html" ng-show="toggle" style="width:100%;height:100%;border: 1px solid #e4e4e4;padding:15px;"></textarea>'
   ];
 
   return {
@@ -15,7 +15,8 @@ angular.module('E50Editor')
       html: '=ngModel',
       buttons: "=?",
       toggle: "=?",
-      document: "=?"
+      document: "=?",
+      override: "=?"
     }
   };
 });
@@ -26,37 +27,43 @@ angular.module('E50Editor')
         html: '=ngModel',
         toggle: "=?",
         buttons: "=?",
-        template: "=?"
+        template: "=?",
+        override: "=?",
+        id: "@e50Iframe"
       },
       link: function(scope, elm) {
         scope.template = scope.template || 'iframe-template.tpl.html';
 
         // Allow the ability to pass in a template url
-        var iframeElm = angular.element('<iframe src="{{template}}"/>');
+        var iframeElm = angular.element('<iframe/>');
         var iframe = $compile(iframeElm)(scope);
 
         // Attach the iframe
         elm.html(iframe);
 
-        // The iframe is using the src tag, so we need to wait until it loads
-        iframe[0].onload = function() {
-          var body = iframe.contents().find('body');
+        var contents = iframe.contents();
+        contents.find('head').append("<style>.ng-hide{display:none !important;}body{margin:0;padding:0;}*:focus{outline:none;}");
 
-          // Grab the iframe's document, so we can use execCommand and other contenteditable commands
-          scope.document = iframe[0].contentDocument || iframe[0].contentWindow.document;
+        var body = contents.find('body');
 
-          // Compile and append the e50-editor directive
-          var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="document">initial editable content</div>';
-          var directiveElm = $compile(directive)(scope);
-          body.append(directiveElm);
+        // Grab the iframe's document, so we can use execCommand and other contenteditable commands
+        scope.document = iframe[0].contentDocument || iframe[0].contentWindow.document;
 
-          // This will resize the iframe's height to it's html height.
-          var html = angular.element(scope.html);
-          var images = html.find('img');
-          images.on('load', function() {
-            iframe.height(iframe.contents().find('html').height());
-          });
-        }
+        // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
+        scope.$emit('e50Document', scope.id, scope.document);
+
+        // Compile and append the e50-editor directive
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="document" override="override">initial editable content</div>';
+        var directiveElm = $compile(directive)(scope);
+        body.append(directiveElm);
+
+        // This will resize the iframe's height to it's html height.
+        var html = angular.element(scope.html);
+        var images = html.find('img');
+        iframe.height(500);
+        images.on('load', function() {
+          //iframe.height(iframe.contents().find('html').height());
+        });
       }
     };
   }]);
@@ -264,7 +271,7 @@ angular.module('E50Editor')
 .directive('e50Toolbars', ["E50EditorButtons", "E50EditorIcons", "$document", function(E50EditorButtons, E50EditorIcons, $document) {
 
   var template = [
-    '<div class="toolbars">',
+    '<div class="toolbars" ng-if="!override">',
       '<div class="group" ng-repeat="(key,editable) in buttons" ng-show="editable.focused">',
         '<button type="button" unselectable="on" ng-repeat="btn in editable.buttons" class="format-button" ng-click="execute(btn)" ng-bind-html="name(btn)" ng-class="{active:isActive(btn)}"></button>',
       '</div>',
@@ -274,7 +281,8 @@ angular.module('E50Editor')
   return {
     scope: {
       buttons: "=",
-      document: "=?"
+      document: "=?",
+      override: "=?"
     },
     template: template.join(''),
     link: function(scope) {

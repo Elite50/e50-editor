@@ -29,7 +29,8 @@
 
     <div class="container">
       <!--<div e50-editor ng-model="tplHtml" toggle="showHtml"></div>-->
-      <div e50-iframe ng-model="tplHtml" toggle="showHtml"></div>
+      <div e50-toolbars buttons="buttons" document="document" ng-if="document"></div>
+      <div e50-iframe="{{iframeId}}" ng-model="tplHtml" toggle="showHtml" override="true" buttons="buttons"></div>
     </div>
 
   </div>
