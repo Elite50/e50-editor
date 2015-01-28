@@ -23,9 +23,9 @@ app.controller('MainCtrl', function($scope, $http) {
     console.log($scope.tplHtml);
   };
 
-  $scope.$on('e50Document', function($event, name, document) {
+  $scope.$on('e50Document', function($event, name, doc) {
     if(name === $scope.iframeId) {
-      $scope.document = document;
+      $scope.document = doc;
     }
   });
 });

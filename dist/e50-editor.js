@@ -44,6 +44,7 @@ angular.module('E50Editor')
         contents.find('head').append("<style>.ng-hide{display:none !important;}body{margin:0;padding:0;}*:focus{outline:none;}");
 
         var body = contents.find('body');
+        body.css({margin: 0, padding: 0});
 
         // Grab the iframe's document, so we can use execCommand and other contenteditable commands
         scope.document = iframe[0].contentDocument || iframe[0].contentWindow.document;
