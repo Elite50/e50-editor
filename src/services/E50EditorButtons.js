@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.factory('E50EditorButtons', function(taBrowserTag, taSelection, taExecCommand) {
+.factory('E50EditorButtons', function(taBrowserTag, taSelection, taExecCommand, E50Documents) {
 
   /**
    * Each command must implement the given interface 
@@ -11,8 +11,8 @@ angular.module('E50Editor')
    *  }
    */
 
-  function setDocument(document) {
-    this.document = document;
+  function setDocument(doc) {
+    this.document = doc;
   }
 
   // This wraps the selection around the given tag
@@ -73,8 +73,8 @@ angular.module('E50Editor')
   function LinkCommand() {
     this.execute = function() {
       var execCommand = taExecCommand(this.document)('p');
-      var url = window.prompt('Link?', 'http://');
-      execCommand('createLink', false, url);      
+      var url = window.prompt('Enter URL', 'http://');
+      execCommand('createLink', false, url);
     };
     this.isActive = function() {
       if(!this.document) { return false; }

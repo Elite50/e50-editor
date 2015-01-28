@@ -21,7 +21,7 @@ angular.module('E50Editor')
   };
 });
 angular.module('E50Editor')
-  .directive('e50Iframe', ["$compile", function($compile) {
+  .directive('e50Iframe', ["$compile", "E50Documents", function($compile, E50Documents) {
     return {
       scope: {
         html: '=ngModel',
@@ -47,13 +47,15 @@ angular.module('E50Editor')
         body.css({margin: 0, padding: 0});
 
         // Grab the iframe's document, so we can use execCommand and other contenteditable commands
-        scope.document = iframe[0].contentDocument || iframe[0].contentWindow.document;
+        var doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+
+        E50Documents.set(scope.id, doc);
 
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
-        scope.$emit('e50Document', scope.id, scope.document);
+        scope.$emit('e50Document', scope.id);
 
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="document" override="override">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="id" override="override">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 
@@ -68,7 +70,7 @@ angular.module('E50Editor')
     };
   }]);
 angular.module('E50Editor')
-.directive('e50Template', ["taSelection", function(taSelection) {
+.directive('e50Template', ["taSelection", "E50Documents", function(taSelection, E50Documents) {
   return {
     require: 'ngModel',
     scope: {
@@ -146,7 +148,8 @@ angular.module('E50Editor')
       }
 
       // Document reference
-      var doc = angular.element(scope.document || document);
+      var iframeDoc = E50Documents.get(scope.document);
+      var doc = angular.element(iframeDoc || document);
       var isIframe = doc[0] !== document;
       if(isIframe) {
         var parentDoc = angular.element(document);
@@ -269,7 +272,7 @@ angular.module('E50Editor')
   };
 }]);
 angular.module('E50Editor')
-.directive('e50Toolbars', ["E50EditorButtons", "E50EditorIcons", "$document", function(E50EditorButtons, E50EditorIcons, $document) {
+.directive('e50Toolbars', ["E50EditorButtons", "E50EditorIcons", "$document", "E50Documents", function(E50EditorButtons, E50EditorIcons, $document, E50Documents) {
 
   var template = [
     '<div class="toolbars" ng-if="!override">',
@@ -282,16 +285,19 @@ angular.module('E50Editor')
   return {
     scope: {
       buttons: "=",
-      document: "=?",
+      document: "=",
       override: "=?"
     },
     template: template.join(''),
     link: function(scope) {
 
+      // Get the iframe document if it exists
+      var doc = E50Documents.get(scope.document);
+
       // Support for multiple documents, ie iframes
       function command(tag) {
         var _command = E50EditorButtons[tag];
-        _command.setDocument(scope.document || $document[0]);
+        _command.setDocument(doc || $document[0]);
         return _command;
       }
 
@@ -315,7 +321,22 @@ angular.module('E50Editor')
 
 }]);
 angular.module('E50Editor')
-.factory('E50EditorButtons', ["taBrowserTag", "taSelection", "taExecCommand", function(taBrowserTag, taSelection, taExecCommand) {
+  .factory('E50Documents', function() {
+    return {
+      docs: {},
+      get: function(id) {
+        if(this.docs[id] !== "undefined") {
+          return this.docs[id];
+        }
+        return false;
+      },
+      set: function(id, doc) {
+        this.docs[id] = doc;
+      }
+    };
+  });
+angular.module('E50Editor')
+.factory('E50EditorButtons', ["taBrowserTag", "taSelection", "taExecCommand", "E50Documents", function(taBrowserTag, taSelection, taExecCommand, E50Documents) {
 
   /**
    * Each command must implement the given interface 
@@ -327,8 +348,8 @@ angular.module('E50Editor')
    *  }
    */
 
-  function setDocument(document) {
-    this.document = document;
+  function setDocument(doc) {
+    this.document = doc;
   }
 
   // This wraps the selection around the given tag
@@ -389,8 +410,8 @@ angular.module('E50Editor')
   function LinkCommand() {
     this.execute = function() {
       var execCommand = taExecCommand(this.document)('p');
-      var url = window.prompt('Link?', 'http://');
-      execCommand('createLink', false, url);      
+      var url = window.prompt('Enter URL', 'http://');
+      execCommand('createLink', false, url);
     };
     this.isActive = function() {
       if(!this.document) { return false; }

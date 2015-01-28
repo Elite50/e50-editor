@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-  .directive('e50Iframe', function($compile) {
+  .directive('e50Iframe', function($compile, E50Documents) {
     return {
       scope: {
         html: '=ngModel',
@@ -25,13 +25,15 @@ angular.module('E50Editor')
         body.css({margin: 0, padding: 0});
 
         // Grab the iframe's document, so we can use execCommand and other contenteditable commands
-        scope.document = iframe[0].contentDocument || iframe[0].contentWindow.document;
+        var doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+
+        E50Documents.set(scope.id, doc);
 
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
-        scope.$emit('e50Document', scope.id, scope.document);
+        scope.$emit('e50Document', scope.id);
 
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="document" override="override">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="id" override="override">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 

@@ -1,5 +1,5 @@
 var app = angular.module('app', ['E50Editor', 'ngSanitize', 'textAngular']);
-app.controller('MainCtrl', function($scope, $http) {
+app.controller('MainCtrl', function($scope, $http, $interval) {
 
   $scope.iframeId = "iframe1";
   $scope.buttons = {};
@@ -23,9 +23,15 @@ app.controller('MainCtrl', function($scope, $http) {
     console.log($scope.tplHtml);
   };
 
-  $scope.$on('e50Document', function($event, name, doc) {
+  $scope.$on('e50Document', function($event, name) {
     if(name === $scope.iframeId) {
-      $scope.document = doc;
+      $scope.iframeLoaded = true;
     }
   });
+
+  //var promise = $interval(function() {
+  //  $http.get('http://localhost:3000/demo/template.css').success(function(res) {
+  //    console.log(res);
+  //  });
+  //}, 1000);
 });

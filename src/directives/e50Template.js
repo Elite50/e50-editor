@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.directive('e50Template', function(taSelection) {
+.directive('e50Template', function(taSelection, E50Documents) {
   return {
     require: 'ngModel',
     scope: {
@@ -77,7 +77,8 @@ angular.module('E50Editor')
       }
 
       // Document reference
-      var doc = angular.element(scope.document || document);
+      var iframeDoc = E50Documents.get(scope.document);
+      var doc = angular.element(iframeDoc || document);
       var isIframe = doc[0] !== document;
       if(isIframe) {
         var parentDoc = angular.element(document);

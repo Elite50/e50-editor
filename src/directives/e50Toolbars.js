@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.directive('e50Toolbars', function(E50EditorButtons, E50EditorIcons, $document) {
+.directive('e50Toolbars', function(E50EditorButtons, E50EditorIcons, $document, E50Documents) {
 
   var template = [
     '<div class="toolbars" ng-if="!override">',
@@ -12,16 +12,19 @@ angular.module('E50Editor')
   return {
     scope: {
       buttons: "=",
-      document: "=?",
+      document: "=",
       override: "=?"
     },
     template: template.join(''),
     link: function(scope) {
 
+      // Get the iframe document if it exists
+      var doc = E50Documents.get(scope.document);
+
       // Support for multiple documents, ie iframes
       function command(tag) {
         var _command = E50EditorButtons[tag];
-        _command.setDocument(scope.document || $document[0]);
+        _command.setDocument(doc || $document[0]);
         return _command;
       }
 
