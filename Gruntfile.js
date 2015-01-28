@@ -32,13 +32,12 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'dist/e50-editor.css':'src/scss/e50-editor.scss',
-          'demo/demo.css': 'demo/demo.scss',
-          'demo/template.css': 'demo/template.scss'
+          'demo/styles/demo.css': 'demo/styles/demo.scss'
         }
       },
       demo: {
         files: {
-          'demo/demo.css': 'demo/demo.scss'
+          'demo/styles/demo.css': 'demo/styles/demo.scss'
         }
       }
     },
@@ -47,7 +46,7 @@ module.exports = function(grunt) {
         options: {
           livereload: 1339
         },
-        files: ['src/**/*.*', 'demo/*.html', 'demo/*.js', 'Gruntfile.js', '**/*.scss'],
+        files: ['src/**/*.js', 'demo/*.html', 'demo/*.js', 'Gruntfile.js', '**/*.scss'],
         tasks: ['default']
       }
     }

@@ -5,7 +5,7 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
   $scope.buttons = {};
 
   // Fetch template
-  $http.get('template.tpl.html').success(function(tpl) {
+  $http.get('templates/template.tpl.html').success(function(tpl) {
     $scope.tplHtml = tpl;
   });
 

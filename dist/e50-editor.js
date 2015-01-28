@@ -158,22 +158,27 @@ angular.module('E50Editor')
       // Apply mouse down handler
       doc.bind('mousedown', mouseDownHandler);
 
+      function mouseUpHandler() {
+        ngModel.$setViewValue(elm.html());
+        scope.$apply();
+      }
+
       // On mouse, scope apply the changes. We need this to update the active toolbar buttons
-      doc.bind('mouseup', scope.$apply.bind(scope));
+      doc.bind('mouseup', mouseUpHandler);
 
       // We need to add mouse event handlers to the parentDocument, if we are in an iframe
       if(isIframe) {
         parentDoc.bind('mousedown', mouseDownHandler);
-        parentDoc.bind('mouseup', scope.$apply.bind(scope));
+        parentDoc.bind('mouseup', mouseUpHandler);
       }
 
       // Unbind event watchers on the document when the scope is destroyed
       scope.$on('$destroy', function() {
         doc.unbind('mousedown', mouseDownHandler);
-        doc.unbind('mouseup', scope.$apply.bind(scope));
+        doc.unbind('mouseup', mouseUpHandler);
         if(isIframe) {
           parentDoc.unbind('mousedown', mouseDownHandler);
-          parentDoc.unbind('mouseup', scope.$apply.bind(scope));
+          parentDoc.unbind('mouseup', mouseUpHandler);
         }
       });
 
