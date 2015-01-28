@@ -45,17 +45,10 @@ module.exports = function(grunt) {
     watch: {
       build: {
         options: {
-          livereload: 1337
+          livereload: 1339
         },
-        files: ['src/**/*.*', 'demo/*.html', 'demo/*.js', 'Gruntfile.js'],
+        files: ['src/**/*.*', 'demo/*.html', 'demo/*.js', 'Gruntfile.js', '**/*.scss'],
         tasks: ['default']
-      },
-      sass: {
-        options: {
-          livereload:1337
-        },
-        files: ['src/**/*.scss', 'demo/*.scss'],
-        tasks:['sass']
       }
     }
   });
