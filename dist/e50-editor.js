@@ -27,7 +27,6 @@ angular.module('E50Editor')
         html: '=ngModel',
         toggle: "=?",
         buttons: "=?",
-        template: "=?",
         override: "=?",
         id: "@e50Iframe"
       },
