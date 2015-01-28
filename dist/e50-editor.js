@@ -240,9 +240,10 @@ angular.module('E50Editor')
               target.attr('src', e.target.result);
               target.removeClass('placeholder');
             } else {
-              var img = new Image();
-              img.src =  e.target.result;
-              angular.element(img).insertAfter(target);
+              var img = $('<img/>');
+              img.attr('src', e.target.result);
+              img.css({width: '100%'});
+              img.insertAfter(target);
             }
             elm.removeClass('drag-over');
             ngModel.$setViewValue(elm.html());
