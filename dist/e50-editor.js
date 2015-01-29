@@ -314,7 +314,9 @@ angular.module('E50Editor')
 
       // Is the current button active
       scope.isActive = function(tag) {
-        return command(tag).isActive();
+        try {
+          return command(tag).isActive();
+        } catch(e) {}
       };
 
       // Execute the button
