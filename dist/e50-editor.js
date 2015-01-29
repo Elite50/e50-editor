@@ -31,14 +31,22 @@ angular.module('E50Editor')
         id: "@e50Iframe"
       },
       link: function(scope, elm) {
+
         scope.template = scope.template || 'iframe-template.tpl.html';
 
         // Allow the ability to pass in a template url
-        var iframeElm = angular.element('<iframe/>');
-        var iframe = $compile(iframeElm)(scope);
+        var iframe = angular.element(document.createElement('iframe'));
+
+        // Im not sure if i need this..
+        scope.$on('$destroy', function() {
+          iframe.remove();
+          E50Documents.docs = [];
+          scope.$emit('e50Document', scope.id, false);
+        });
 
         // Attach the iframe
-        elm.html(iframe);
+        elm.html("");
+        elm.append(iframe);
 
         var contents = iframe.contents();
         contents.find('head').append("<style>.ng-hide{display:none !important;}body{margin:0;padding:0;}*:focus{outline:none;}");
@@ -52,7 +60,7 @@ angular.module('E50Editor')
         E50Documents.set(scope.id, doc);
 
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
-        scope.$emit('e50Document', scope.id);
+        scope.$emit('e50Document', scope.id, true);
 
         // Compile and append the e50-editor directive
         var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="id" override="override">initial editable content</div>';
