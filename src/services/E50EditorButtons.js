@@ -22,8 +22,8 @@ angular.module('E50Editor')
       return this.document.queryCommandValue('formatBlock').toLowerCase() === tag;
     };
     this.execute = function() {
-      var execCommand = taExecCommand(this.document)('p');
-      execCommand('formatBlock', false, '<'+taBrowserTag(tag)+'>');
+      var newTag = this.isActive() ? 'P' : tag;
+      this.document.execCommand('formatBlock', false, '<'+taBrowserTag(newTag)+'>');
     };
     this.setDocument = setDocument;
   }
