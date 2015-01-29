@@ -18,13 +18,15 @@ angular.module('E50Editor')
         // Im not sure if i need this..
         scope.$on('$destroy', function() {
           iframe.remove();
-          E50Documents.docs = [];
+          delete E50Documents.docs[scope.id];
           scope.$emit('e50Document', scope.id, false);
         });
 
         // Attach the iframe
-        elm.html("");
-        elm.append(iframe);
+        elm.html(iframe);
+
+        // Get the newly appended iframe
+        iframe = elm.find('iframe');
 
         var contents = iframe.contents();
         contents.find('head').append("<style>.ng-hide{display:none !important;}body{margin:0;padding:0;}*:focus{outline:none;}");
