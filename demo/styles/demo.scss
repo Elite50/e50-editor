@@ -1,5 +1,27 @@
+$bg: #f2f2f2;
+
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+.clearfix {
+    display: inline-block;
+}
+* html .clearfix {
+    height: 1%;
+}
+.clearfix {
+    display: block;
+}
+
+
 body {
-    background-color: #f2f2f2;
+    background-color: $bg;
     padding: 50px;
     font-family: 'Helvetica Neue';
 }
@@ -8,6 +30,10 @@ body {
     &:focus {
         outline:none;
     }
+}
+
+.container.btns {
+    background-color: $bg;
 }
 
 .container {
@@ -69,9 +95,9 @@ body {
     }
 
     .format-buttons {
-        position:absolute;
-        top: -6px;
-        left: 18px;
+//        position:absolute;
+//        top: -6px;
+//        left: 18px;
     }
 
     .live-editor {
@@ -85,10 +111,10 @@ body {
 }
 
 .group {
-    background-color: white;
-    position:fixed;
-    top: 10px;
-    z-index: 10;
+//    background-color: white;
+//    position:fixed;
+//    top: 10px;
+//    z-index: 10;
 }
 
 .debug {
@@ -124,7 +150,12 @@ textarea {
     }
 }
 
-button {
+.toggle {
+    float:left;
+}
+
+.format-button,
+.toggle {
     color: #fafafa;
     border: 0px;
     border-radius: 0px;

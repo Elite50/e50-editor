@@ -23,13 +23,13 @@
 
   <div ng-controller="MainCtrl">
 
-    <p style="text-align:center;">
-      <a href="" ng-click="showHtml=!showHtml" class="show-html">Show {{showHtml ? 'live' : 'html'}}</a>
-    </p>
+    <div class="container btns clearfix">
+        <button type="button" ng-click="showHtml=!showHtml" class="toggle">Show {{showHtml ? 'live' : 'html'}}</button>
+        <div e50-toolbars buttons="buttons" document="iframeId" ng-if="iframeLoaded"></div>
+    </div>
 
     <div class="container">
       <!--<div e50-editor ng-model="tplHtml" toggle="showHtml"></div>-->
-      <div e50-toolbars buttons="buttons" document="iframeId" ng-if="iframeLoaded"></div>
       <div e50-iframe="{{iframeId}}" ng-model="tplHtml" toggle="showHtml" override="true" buttons="buttons"></div>
     </div>
 

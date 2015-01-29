@@ -1,3 +1,20 @@
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0; }
+
+.clearfix {
+  display: inline-block; }
+
+* html .clearfix {
+  height: 1%; }
+
+.clearfix {
+  display: block; }
+
 body {
   background-color: #f2f2f2;
   padding: 50px;
@@ -5,6 +22,9 @@ body {
 
 [contenteditable="true"]:focus {
   outline: none; }
+
+.container.btns {
+  background-color: #f2f2f2; }
 
 .container {
   width: 700px;
@@ -47,18 +67,8 @@ body {
   font-size: 12px;
   text-decoration: none;
   color: #333; }
-.e50-editor .format-buttons {
-  position: absolute;
-  top: -6px;
-  left: 18px; }
 .e50-editor .live-editor.drag-enter img.placeholder:hover {
   opacity: 0.8; }
-
-.group {
-  background-color: white;
-  position: fixed;
-  top: 10px;
-  z-index: 10; }
 
 .debug {
   position: fixed;
@@ -85,7 +95,11 @@ textarea {
   .show-html:hover {
     background-color: #c6c6c6; }
 
-button {
+.toggle {
+  float: left; }
+
+.format-button,
+.toggle {
   color: #fafafa;
   border: 0px;
   border-radius: 0px;
@@ -95,11 +109,14 @@ button {
   margin-right: 1px;
   -webkit-transition: all linear 0.1s;
   transition: all linear 0.1s; }
-  button:focus {
+  .format-button:focus,
+  .toggle:focus {
     outline: none; }
-  button:hover {
+  .format-button:hover,
+  .toggle:hover {
     cursor: pointer; }
-  button.active {
+  .format-button.active,
+  .toggle.active {
     background-color: #00aeef; }
 
 iframe {
