@@ -77,7 +77,8 @@ angular.module('E50Editor')
       }
 
       // Document reference
-      var iframeDoc = E50Documents.get(scope.document);
+      var iframe = E50Documents.get(scope.document);
+      var iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
       var doc = angular.element(iframeDoc || document);
       var isIframe = doc[0] !== document;
       if(isIframe) {
@@ -201,6 +202,15 @@ angular.module('E50Editor')
       // Unbind our drop events when the scope is destroyed
       scope.$on('$destroy', function() {
         elm.unbind("drop", dropHandler);
+      });
+
+      // Watch events to add text
+      scope.$on("e50AddText", function(event, id, text) {
+        if(id !== scope.document) { return false; }
+        var sel = rangy.getIframeSelection(iframe[0]);
+        var range = sel.getRangeAt(0);
+        range.insertNode(document.createTextNode(text));
+        ngModel.$setViewValue(elm.html());
       });
     }
   };

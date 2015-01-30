@@ -15,7 +15,7 @@ angular.module('E50Editor')
         // Allow the ability to pass in a template url
         var iframe = angular.element(document.createElement('iframe'));
 
-        // Im not sure if i need this..
+        // Remove all traces of the iframe
         scope.$on('$destroy', function() {
           iframe.remove();
           delete E50Documents.docs[scope.id];
@@ -34,13 +34,11 @@ angular.module('E50Editor')
         var body = contents.find('body');
         body.css({margin: 0, padding: 0});
 
-        // Grab the iframe's document, so we can use execCommand and other contenteditable commands
-        var doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
-
-        E50Documents.set(scope.id, doc);
+        // Set the iframe for later, so we can use it in our other editor directives
+        E50Documents.set(scope.id, iframe);
 
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
-        scope.$emit('e50Document', scope.id, true);
+        scope.$emit('e50Document', scope.id, true, iframe);
 
         // Compile and append the e50-editor directive
         var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="id" override="override">initial editable content</div>';

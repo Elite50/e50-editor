@@ -37,7 +37,7 @@ angular.module('E50Editor')
         // Allow the ability to pass in a template url
         var iframe = angular.element(document.createElement('iframe'));
 
-        // Im not sure if i need this..
+        // Remove all traces of the iframe
         scope.$on('$destroy', function() {
           iframe.remove();
           delete E50Documents.docs[scope.id];
@@ -56,13 +56,11 @@ angular.module('E50Editor')
         var body = contents.find('body');
         body.css({margin: 0, padding: 0});
 
-        // Grab the iframe's document, so we can use execCommand and other contenteditable commands
-        var doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
-
-        E50Documents.set(scope.id, doc);
+        // Set the iframe for later, so we can use it in our other editor directives
+        E50Documents.set(scope.id, iframe);
 
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
-        scope.$emit('e50Document', scope.id, true);
+        scope.$emit('e50Document', scope.id, true, iframe);
 
         // Compile and append the e50-editor directive
         var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="id" override="override">initial editable content</div>';
@@ -158,7 +156,8 @@ angular.module('E50Editor')
       }
 
       // Document reference
-      var iframeDoc = E50Documents.get(scope.document);
+      var iframe = E50Documents.get(scope.document);
+      var iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
       var doc = angular.element(iframeDoc || document);
       var isIframe = doc[0] !== document;
       if(isIframe) {
@@ -283,6 +282,15 @@ angular.module('E50Editor')
       scope.$on('$destroy', function() {
         elm.unbind("drop", dropHandler);
       });
+
+      // Watch events to add text
+      scope.$on("e50AddText", function(event, id, text) {
+        if(id !== scope.document) { return false; }
+        var sel = rangy.getIframeSelection(iframe[0]);
+        var range = sel.getRangeAt(0);
+        range.insertNode(document.createTextNode(text));
+        ngModel.$setViewValue(elm.html());
+      });
     }
   };
 }]);
@@ -307,7 +315,9 @@ angular.module('E50Editor')
     link: function(scope) {
 
       // Get the iframe document if it exists
-      var doc = E50Documents.get(scope.document);
+      var iframe = E50Documents.get(scope.document);
+
+      var doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
 
       // Support for multiple documents, ie iframes
       function command(tag) {

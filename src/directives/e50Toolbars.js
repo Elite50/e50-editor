@@ -19,7 +19,9 @@ angular.module('E50Editor')
     link: function(scope) {
 
       // Get the iframe document if it exists
-      var doc = E50Documents.get(scope.document);
+      var iframe = E50Documents.get(scope.document);
+
+      var doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
 
       // Support for multiple documents, ie iframes
       function command(tag) {

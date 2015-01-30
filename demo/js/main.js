@@ -29,6 +29,12 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
     }
   });
 
+  $scope.textToAdd = "{{FNAME}}";
+
+  $scope.addText = function() {
+    $scope.$broadcast("e50AddText", $scope.iframeId, $scope.textToAdd);
+  };
+
   //var promise = $interval(function() {
   //  $http.get('http://localhost:3000/demo/template.css').success(function(res) {
   //    console.log(res);
