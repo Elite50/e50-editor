@@ -12,19 +12,27 @@ angular.module('E50Editor')
   return {
     scope: {
       buttons: "=",
-      document: "=",
+      iframeId: "=",
       override: "=?"
     },
     template: template.join(''),
     link: function(scope) {
 
       // Get the iframe document if it exists
-      var iframe = E50Documents.get(scope.document);
+      var iframe = E50Documents.get(scope.iframeId);
 
-      var doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+      var doc;
+      if(iframe) {
+        doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+      }
 
       // Support for multiple documents, ie iframes
       function command(tag) {
+        // If we didn't get the iframe before, get it now
+        if(!doc) {
+          iframe = E50Documents.get(scope.iframeId);
+          doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+        }
         var _command = E50EditorButtons[tag];
         _command.setDocument(doc || $document[0]);
         return _command;

@@ -6,7 +6,7 @@ angular.module('E50Editor')
         toggle: "=?",
         buttons: "=?",
         override: "=?",
-        id: "@e50Iframe"
+        iframeId: "@e50Iframe"
       },
       link: function(scope, elm) {
 
@@ -35,13 +35,13 @@ angular.module('E50Editor')
         body.css({margin: 0, padding: 0});
 
         // Set the iframe for later, so we can use it in our other editor directives
-        E50Documents.set(scope.id, iframe);
+        E50Documents.set(scope.iframeId, iframe);
 
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
-        scope.$emit('e50Document', scope.id, true, iframe);
+        scope.$emit('e50Document', scope.iframeId, true, iframe);
 
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="id" override="override">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 

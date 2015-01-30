@@ -5,7 +5,7 @@ angular.module('E50Editor')
     scope: {
       html: "=ngModel",
       buttons: "=",
-      document: "=?"
+      iframeId: "=?"
     },
     link: function(scope, elm, attrs, ngModel) {
 
@@ -77,7 +77,7 @@ angular.module('E50Editor')
       }
 
       // Document reference
-      var iframe = E50Documents.get(scope.document);
+      var iframe = E50Documents.get(scope.iframeId);
       var iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
       var doc = angular.element(iframeDoc || document);
       var isIframe = doc[0] !== document;
@@ -206,7 +206,7 @@ angular.module('E50Editor')
 
       // Watch events to add text
       scope.$on("e50AddText", function(event, id, text) {
-        if(id !== scope.document) { return false; }
+        if(id !== scope.iframeId) { return false; }
         var sel = rangy.getIframeSelection(iframe[0]);
         var range = sel.getRangeAt(0);
         range.insertNode(document.createTextNode(text));

@@ -3,8 +3,8 @@ angular.module('E50Editor')
 .directive('e50Editor', function() {
 
   var template = [
-    '<div e50-toolbars buttons="buttons" document="document" override="override"></div>',
-    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle" document="document"></div>',
+    '<div e50-toolbars buttons="buttons" iframe-id="iframeId" override="override"></div>',
+    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle" iframe-id="iframeId"></div>',
     '<textarea ng-model="html" ng-show="toggle" style="width:100%;height:100%;border: 1px solid #e4e4e4;padding:15px;"></textarea>'
   ];
 
@@ -15,7 +15,7 @@ angular.module('E50Editor')
       html: '=ngModel',
       buttons: "=?",
       toggle: "=?",
-      document: "=?",
+      iframeId: "=?",
       override: "=?"
     }
   };
@@ -28,7 +28,7 @@ angular.module('E50Editor')
         toggle: "=?",
         buttons: "=?",
         override: "=?",
-        id: "@e50Iframe"
+        iframeId: "@e50Iframe"
       },
       link: function(scope, elm) {
 
@@ -57,13 +57,13 @@ angular.module('E50Editor')
         body.css({margin: 0, padding: 0});
 
         // Set the iframe for later, so we can use it in our other editor directives
-        E50Documents.set(scope.id, iframe);
+        E50Documents.set(scope.iframeId, iframe);
 
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
-        scope.$emit('e50Document', scope.id, true, iframe);
+        scope.$emit('e50Document', scope.iframeId, true, iframe);
 
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" document="id" override="override">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 
@@ -84,7 +84,7 @@ angular.module('E50Editor')
     scope: {
       html: "=ngModel",
       buttons: "=",
-      document: "=?"
+      iframeId: "=?"
     },
     link: function(scope, elm, attrs, ngModel) {
 
@@ -156,7 +156,7 @@ angular.module('E50Editor')
       }
 
       // Document reference
-      var iframe = E50Documents.get(scope.document);
+      var iframe = E50Documents.get(scope.iframeId);
       var iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
       var doc = angular.element(iframeDoc || document);
       var isIframe = doc[0] !== document;
@@ -285,7 +285,7 @@ angular.module('E50Editor')
 
       // Watch events to add text
       scope.$on("e50AddText", function(event, id, text) {
-        if(id !== scope.document) { return false; }
+        if(id !== scope.iframeId) { return false; }
         var sel = rangy.getIframeSelection(iframe[0]);
         var range = sel.getRangeAt(0);
         range.insertNode(document.createTextNode(text));
@@ -308,19 +308,27 @@ angular.module('E50Editor')
   return {
     scope: {
       buttons: "=",
-      document: "=",
+      iframeId: "=",
       override: "=?"
     },
     template: template.join(''),
     link: function(scope) {
 
       // Get the iframe document if it exists
-      var iframe = E50Documents.get(scope.document);
+      var iframe = E50Documents.get(scope.iframeId);
 
-      var doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+      var doc;
+      if(iframe) {
+        doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+      }
 
       // Support for multiple documents, ie iframes
       function command(tag) {
+        // If we didn't get the iframe before, get it now
+        if(!doc) {
+          iframe = E50Documents.get(scope.iframeId);
+          doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+        }
         var _command = E50EditorButtons[tag];
         _command.setDocument(doc || $document[0]);
         return _command;
