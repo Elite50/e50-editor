@@ -150,6 +150,10 @@ angular.module('E50Editor')
         var target = angular.element(e.target);
         var editable = target.closest('[editable]');
 
+        if(!editable.length) {
+          return false;
+        }
+
         // Set the caret position to the start of the placeholder
         if(target.hasClass('placeholder')) {
           var iframeDoc = isIframe ? doc : parentDoc;
