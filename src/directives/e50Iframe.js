@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-  .directive('e50Iframe', function($compile, E50Documents) {
+  .directive('e50Iframe', function($compile, E50Documents, E50EditorConfig) {
     return {
       scope: {
         html: '=ngModel',
@@ -30,6 +30,7 @@ angular.module('E50Editor')
 
         var contents = iframe.contents();
         contents.find('head').append("<style>.ng-hide{display:none !important;}body{margin:0;padding:0;}*:focus{outline:none;}");
+        contents.find('head').append('<link href="'+E50EditorConfig.fontAwesome+'" rel="stylesheet"/>');
 
         var body = contents.find('body');
         body.css({margin: 0, padding: 0});
@@ -40,8 +41,10 @@ angular.module('E50Editor')
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
         scope.$emit('e50Document', scope.iframeId, true, iframe);
 
+        scope.popoverElm = {};
+
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override" popover-elm="popoverElm">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 

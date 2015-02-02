@@ -3,8 +3,9 @@ angular.module('E50Editor')
 .directive('e50Editor', function() {
 
   var template = [
+    '<div e50-popover class="e50-popover"></div>',
     '<div e50-toolbars buttons="buttons" iframe-id="iframeId" override="override"></div>',
-    '<div class="template" e50-template ng-model="html" buttons="buttons" ng-show="!toggle" iframe-id="iframeId"></div>',
+    '<div class="template" e50-template ng-model="html" ng-show="!toggle"></div>',
     '<textarea ng-model="html" ng-show="toggle" style="width:100%;height:100%;border: 1px solid #e4e4e4;padding:15px;"></textarea>'
   ];
 
@@ -21,7 +22,7 @@ angular.module('E50Editor')
   };
 });
 angular.module('E50Editor')
-  .directive('e50Iframe', ["$compile", "E50Documents", function($compile, E50Documents) {
+  .directive('e50Iframe', ["$compile", "E50Documents", "E50EditorConfig", function($compile, E50Documents, E50EditorConfig) {
     return {
       scope: {
         html: '=ngModel',
@@ -52,6 +53,7 @@ angular.module('E50Editor')
 
         var contents = iframe.contents();
         contents.find('head').append("<style>.ng-hide{display:none !important;}body{margin:0;padding:0;}*:focus{outline:none;}");
+        contents.find('head').append('<link href="'+E50EditorConfig.fontAwesome+'" rel="stylesheet"/>');
 
         var body = contents.find('body');
         body.css({margin: 0, padding: 0});
@@ -62,8 +64,10 @@ angular.module('E50Editor')
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
         scope.$emit('e50Document', scope.iframeId, true, iframe);
 
+        scope.popoverElm = {};
+
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override" popover-elm="popoverElm">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 
@@ -78,17 +82,46 @@ angular.module('E50Editor')
     };
   }]);
 angular.module('E50Editor')
+  .directive('e50Popover', ["$timeout", function($timeout) {
+
+    var template = [
+      '<div class="link-manager" ng-repeat="popover in popovers" ng-show="popover.show">',
+      '<input type="text" ng-model="popover.link" />',
+      '<a href="" target="_blank" ng-attr-href="{{popover.link}}">Open</a>',
+      '</div>'
+    ];
+
+    return {
+      template: template.join(''),
+      link: function(scope, elm) {
+        scope.$on('e50Popover', function(ev, popoverElm) {
+          var id = popoverElm.attr('popover');
+          angular.forEach(scope.popovers, function(popover, key) {
+            popover.show = (key === id);
+          });
+          $timeout(function() {
+            var offset = popoverElm.offset();
+            offset.top = offset.top - elm.height() - 5;
+            offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width();
+            elm.css(offset);
+          });
+        });
+      }
+    };
+
+  }]);
+angular.module('E50Editor')
 .directive('e50Template', ["taSelection", "E50Documents", function(taSelection, E50Documents) {
   return {
     require: 'ngModel',
-    scope: {
-      html: "=ngModel",
-      buttons: "=",
-      iframeId: "=?"
-    },
     link: function(scope, elm, attrs, ngModel) {
 
       scope.buttons = scope.buttons || {};
+
+      // If there's no initial html, use the view's html
+      if(!scope.html) {
+        ngModel.$setViewValue(elm.html());
+      }
 
       // Track the number of editable areas
       var numOfEditables = $(elm).find('[editable]').length;
@@ -138,6 +171,7 @@ angular.module('E50Editor')
           Object.keys(scope.buttons).forEach(function(editableId) {
             scope.buttons[editableId].focused = false;
           });
+          scope.showPopover = false;
           return;
         }
 
@@ -175,7 +209,7 @@ angular.module('E50Editor')
       // On mouse, scope apply the changes. We need this to update the active toolbar buttons
       doc.bind('mouseup', mouseUpHandler);
 
-      // We need to add mouse event handlers to the parentDocument, if we are in an iframe
+      // We need to add mouse event handlers to the parentDocument bc clicks don't propagate past the iframe
       if(isIframe) {
         parentDoc.bind('mousedown', mouseDownHandler);
         parentDoc.bind('mouseup', mouseUpHandler);
@@ -195,11 +229,6 @@ angular.module('E50Editor')
       ngModel.$render = function() {
         elm.html(ngModel.$viewValue);
       };
-
-      // If there's no initial html, use the view's html
-      if(!scope.html) {
-        ngModel.$setViewValue(elm.html());
-      }
 
       // On every keyup, sync the view with the model (scope.html)
       elm.bind('keyup', function(e) {
@@ -282,9 +311,66 @@ angular.module('E50Editor')
       // Watch for drop event
       elm.bind('drop', dropHandler);
 
+      scope.popovers = {};
+
+      // Popover handler
+      function popoverHandler(e) {
+        var target = angular.element(e.target);
+        var popover  = target.closest('.e50-popover');
+        if(!popover.length && !target.attr('popover')) {
+          scope.showPopover = false;
+          angular.forEach(scope.popovers, function(popover) {
+            popover.show = false;
+          });
+          return;
+        }
+        scope.showPopover = true;
+        scope.$emit('e50Popover', target);
+        scope.$apply();
+      }
+
+      elm.bind('mousedown', popoverHandler);
+
+      if(isIframe) {
+        parentDoc.bind('mousedown', popoverHandler);
+      }
+
+      var popoverLength = false;
+      var popoverElms = {};
+      function getPopovers() {
+        var html = angular.element(elm);
+        var popovers = html.find('[popover]');
+        if(popovers.length === popoverLength) { return false; }
+        popoverLength = popovers.length;
+        angular.forEach(popovers, function(popover, i) {
+          var popoverElm = angular.element(popover);
+          var id = popoverElm.attr('popover');
+          popoverElms[id] = popoverElm;
+          scope.popovers[id] = {
+            id: id,
+            link: 'http://',
+            show: false
+          };
+        });
+      }
+
+      scope.$watch('html', function(newV, oldV) {
+        if(!newV && newV === oldV){ return; }
+        getPopovers();
+      });
+
+      scope.$watch('popovers', function() {
+        angular.forEach(scope.popovers, function(popover, id) {
+          popoverElms[id].attr('href', popover.link);
+        });
+        ngModel.$setViewValue(elm.html());
+      }, true);
+
+
       // Unbind our drop events when the scope is destroyed
       scope.$on('$destroy', function() {
         elm.unbind("drop", dropHandler);
+        parentDoc.unbind('mousedown', popoverHandler);
       });
 
       // Watch events to add text
@@ -490,6 +576,12 @@ angular.module('E50Editor')
   };
   return buttons;
 }]);
+angular.module('E50Editor')
+  .factory('E50EditorConfig', function() {
+    return {
+      fontAwesome: '../bower_components/font-awesome/css/font-awesome.css'
+    };
+  });
 angular.module('E50Editor')
 .factory('E50EditorIcons', function() {
   
