@@ -19,7 +19,10 @@ angular.module('E50Editor')
           $timeout(function() {
             var offset = popoverElm.offset();
             offset.top = offset.top - elm.height() - 5;
-            offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width();
+            var extraWidth = 0;
+            extraWidth += parseInt(popoverElm.css('padding-right'));
+            extraWidth += parseInt(popoverElm.css('margin-right'));
+            offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width() + extraWidth;
             elm.css(offset);
           });
         });

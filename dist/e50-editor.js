@@ -102,7 +102,10 @@ angular.module('E50Editor')
           $timeout(function() {
             var offset = popoverElm.offset();
             offset.top = offset.top - elm.height() - 5;
-            offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width();
+            var extraWidth = 0;
+            extraWidth += parseInt(popoverElm.css('padding-right'));
+            extraWidth += parseInt(popoverElm.css('margin-right'));
+            offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width() + extraWidth;
             elm.css(offset);
           });
         });
@@ -111,7 +114,7 @@ angular.module('E50Editor')
 
   }]);
 angular.module('E50Editor')
-.directive('e50Template', ["taSelection", "E50Documents", function(taSelection, E50Documents) {
+.directive('e50Template', ["taSelection", "E50Documents", "$timeout", function(taSelection, E50Documents, $timeout) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ngModel) {
@@ -342,13 +345,19 @@ angular.module('E50Editor')
         var popovers = html.find('[popover]');
         if(popovers.length === popoverLength) { return false; }
         popoverLength = popovers.length;
+        popoverElms = {};
+        scope.popovers = {};
         angular.forEach(popovers, function(popover, i) {
           var popoverElm = angular.element(popover);
           var id = popoverElm.attr('popover');
+          while (popoverElms[id]) {
+            id += i;
+          }
+          popoverElm.attr('popover', id);
           popoverElms[id] = popoverElm;
           scope.popovers[id] = {
             id: id,
-            link: 'http://',
+            link: popoverElm.attr('href') || 'http://',
             show: false
           };
         });
@@ -361,7 +370,9 @@ angular.module('E50Editor')
 
       scope.$watch('popovers', function() {
         angular.forEach(scope.popovers, function(popover, id) {
-          popoverElms[id].attr('href', popover.link);
+          if(popoverElms[id]) {
+            popoverElms[id].attr('href', popover.link);
+          }
         });
         ngModel.$setViewValue(elm.html());
       }, true);
@@ -372,6 +383,26 @@ angular.module('E50Editor')
         elm.unbind("drop", dropHandler);
         parentDoc.unbind('mousedown', popoverHandler);
       });
+
+      function linkHandler(e) {
+        var target = angular.element(e.target);
+        var isLink = e.target.tagName.toLowerCase() === 'a' || target.closest('a').length;
+        if(isLink) {
+          var id = target.attr('popover');
+          if(!id) {
+            id = "link:1";
+            while(popoverElms[id]) {
+              id += 1;
+            }
+            target.attr('popover', id);
+            popoverElms[id] = target;
+            ngModel.$setViewValue(elm.html());
+            scope.$apply();
+          }
+        }
+      }
+
+      elm.bind('mousedown', linkHandler);
 
       // Watch events to add text
       scope.$on("e50AddText", function(event, id, text) {
@@ -535,7 +566,7 @@ angular.module('E50Editor')
   function LinkCommand() {
     this.execute = function() {
       var execCommand = taExecCommand(this.document)('p');
-      var url = window.prompt('Enter URL', 'http://');
+      var url = "http://";
       execCommand('createLink', false, url);
     };
     this.isActive = function() {
