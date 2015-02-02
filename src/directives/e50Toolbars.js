@@ -41,6 +41,7 @@ angular.module('E50Editor')
       // Get the name of the button, if there's no icon for it
       scope.name = function(tag) {
         var icon = E50EditorIcons(tag);
+        if(!E50EditorButtons[tag]) { return false; }
         return icon ? icon : E50EditorButtons[tag].name;
       };
 

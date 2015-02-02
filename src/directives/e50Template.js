@@ -35,7 +35,7 @@ angular.module('E50Editor')
           e.attr('contenteditable', true);
           scope.buttons[e.attr('editable')] = {
             focused: false,
-            buttons: e.attr("format").split(',')
+            buttons: e.attr("format") ? e.attr('format').split(',') : []
           };
         });
 

@@ -150,7 +150,7 @@ angular.module('E50Editor')
           e.attr('contenteditable', true);
           scope.buttons[e.attr('editable')] = {
             focused: false,
-            buttons: e.attr("format").split(',')
+            buttons: e.attr("format") ? e.attr('format').split(',') : []
           };
         });
 
@@ -458,6 +458,7 @@ angular.module('E50Editor')
       // Get the name of the button, if there's no icon for it
       scope.name = function(tag) {
         var icon = E50EditorIcons(tag);
+        if(!E50EditorButtons[tag]) { return false; }
         return icon ? icon : E50EditorButtons[tag].name;
       };
 
