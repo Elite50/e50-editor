@@ -15,6 +15,10 @@ angular.module('E50Editor')
         var linkElement;
         var iframe = E50Documents.get(scope.iframeId);
         scope.unlink = function(popover) {
+          var isLink = linkElement[0].tagName.toLowerCase() === 'a';
+          if(!isLink) {
+            linkElement = linkElement.closest('a');
+          }
           $timeout(function() {
             var range = rangy.createRange();
             range.selectNodeContents(linkElement[0]);
@@ -40,12 +44,20 @@ angular.module('E50Editor')
           });
           $timeout(function() {
             var offset = popoverElm.offset();
-            offset.top = offset.top - elm.height() - 5;
+            offset.top = offset.top - elm.height() - 10;
+
             var extraWidth = 0;
             extraWidth += parseInt(popoverElm.css('padding-right'));
             extraWidth += parseInt(popoverElm.css('margin-right'));
+
             offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width() + extraWidth;
+
             elm.css(offset);
+
+            elm.animate({
+              top: offset.top + 5
+            }, 200);
+
           });
         });
       }

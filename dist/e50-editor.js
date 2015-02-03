@@ -98,6 +98,10 @@ angular.module('E50Editor')
         var linkElement;
         var iframe = E50Documents.get(scope.iframeId);
         scope.unlink = function(popover) {
+          var isLink = linkElement[0].tagName.toLowerCase() === 'a';
+          if(!isLink) {
+            linkElement = linkElement.closest('a');
+          }
           $timeout(function() {
             var range = rangy.createRange();
             range.selectNodeContents(linkElement[0]);
@@ -123,12 +127,20 @@ angular.module('E50Editor')
           });
           $timeout(function() {
             var offset = popoverElm.offset();
-            offset.top = offset.top - elm.height() - 5;
+            offset.top = offset.top - elm.height() - 10;
+
             var extraWidth = 0;
             extraWidth += parseInt(popoverElm.css('padding-right'));
             extraWidth += parseInt(popoverElm.css('margin-right'));
+
             offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width() + extraWidth;
+
             elm.css(offset);
+
+            elm.animate({
+              top: offset.top + 5
+            }, 200);
+
           });
         });
       }
@@ -342,7 +354,10 @@ angular.module('E50Editor')
       function popoverHandler(e) {
         var target = angular.element(e.target);
         var popover  = target.closest('.e50-popover');
-        if(!popover.length && !target.attr('popover')) {
+        if(!target.attr('popover')) {
+          target = target.closest('[popover]');
+        }
+        if(!popover.length && !target.length) {
           scope.showPopover = false;
           angular.forEach(scope.popovers, function(popover) {
             popover.show = false;
@@ -408,7 +423,10 @@ angular.module('E50Editor')
 
       function linkHandler(e) {
         var target = angular.element(e.target);
-        var isLink = e.target.tagName.toLowerCase() === 'a' || target.closest('a').length;
+        var isLink = e.target.tagName.toLowerCase() === 'a';
+        if(!isLink) {
+          target = target.closest('a');
+        }
         if(isLink) {
           var id = target.attr('popover');
           if(!id) {
