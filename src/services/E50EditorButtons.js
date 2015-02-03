@@ -73,7 +73,7 @@ angular.module('E50Editor')
   function LinkCommand() {
     this.execute = function() {
       var execCommand = taExecCommand(this.document)('p');
-      var url = "http://";
+      var url = window.prompt('Link URL:', 'http://');
       execCommand('createLink', false, url);
     };
     this.isActive = function() {
@@ -86,7 +86,7 @@ angular.module('E50Editor')
   }
 
   var formats = ['h1','h2','h3','h4','h5','h6','p','pre','blockquote'];
-  var styles  = ['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'insertOrderedList', 'insertUnorderedList'];
+  var styles  = ['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'insertOrderedList', 'insertUnorderedList', 'unlink'];
   var buttons = {};
 
   formats.forEach(function(format) {
