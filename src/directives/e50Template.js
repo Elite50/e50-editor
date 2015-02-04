@@ -238,6 +238,7 @@ angular.module('E50Editor')
         angular.forEach(popovers, function(popover, i) {
           var popoverElm = angular.element(popover);
           var id = popoverElm.attr('popover');
+          if(id === 'false') { return; }
           while (popoverElms[id]) {
             id += i;
           }
@@ -280,6 +281,7 @@ angular.module('E50Editor')
         }
         if(isLink) {
           var id = target.attr('popover');
+          if(id === 'false') { return; }
           if(!id) {
             id = "link:1";
             while(popoverElms[id]) {
