@@ -77,10 +77,7 @@ angular.module('E50Editor')
       doc.execCommand('createLink', false, url);
     };
     this.isActive = function() {
-      if(!this.document) { return false; }
-      var selection = taSelection(this.document);
-      var elm = selection.getSelectionElement();
-      return $(elm).closest('a').length;      
+      return false;
     };
     this.setDocument = setDocument;
   }
