@@ -72,7 +72,6 @@ angular.module('E50Editor')
   // Creates a link
   function LinkCommand() {
     this.execute = function() {
-      var sel = rangy.getIframeSelection(this.iframe[0]);
       var url = window.prompt('Link URL:', 'http://');
       var doc = this.iframe[0].document || this.iframe[0].contentWindow.document;
       doc.execCommand('createLink', false, url);

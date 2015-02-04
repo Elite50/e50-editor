@@ -40,9 +40,14 @@ angular.module('E50Editor')
           linkElement = popoverElm;
           var id = popoverElm.attr('popover');
           angular.forEach(scope.popovers, function(popover, key) {
-            popover.show = (key === id);
+            popover.show = (key === id) && id !== 'false';
           });
+          elm.css({
+            opacity: 0
+          });
+
           $timeout(function() {
+
             var offset = popoverElm.offset();
             offset.top = offset.top - elm.height() - 10;
 
@@ -51,11 +56,11 @@ angular.module('E50Editor')
             extraWidth += parseInt(popoverElm.css('margin-right'));
 
             offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width() + extraWidth;
-
             elm.css(offset);
 
             elm.animate({
-              top: offset.top + 5
+              top: offset.top + 5,
+              opacity: 1
             }, 200);
 
           });
