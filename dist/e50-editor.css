@@ -32,5 +32,13 @@
   color: #00aeef;
   text-decoration: none; }
 
-.link-manager .fa-unlink {
-  padding-left: 10px;  }
+.link-manager i {
+  background-color: #666666;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 200;
+  padding: 3px;
+  margin-right: 5px; }
+
+.link-manager i:last-child {
+  margin-right: 0; }

@@ -491,6 +491,7 @@ angular.module('E50Editor')
           doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
         }
         var _command = E50EditorButtons[tag];
+        _command.iframe = iframe;
         _command.setDocument(doc || $document[0]);
         return _command;
       }
@@ -606,9 +607,10 @@ angular.module('E50Editor')
   // Creates a link
   function LinkCommand() {
     this.execute = function() {
-      var execCommand = taExecCommand(this.document)('p');
+      var sel = rangy.getIframeSelection(this.iframe[0]);
       var url = window.prompt('Link URL:', 'http://');
-      execCommand('createLink', false, url);
+      var doc = this.iframe[0].document || this.iframe[0].contentWindow.document;
+      doc.execCommand('createLink', false, url);
     };
     this.isActive = function() {
       if(!this.document) { return false; }

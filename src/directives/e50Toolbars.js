@@ -34,6 +34,7 @@ angular.module('E50Editor')
           doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
         }
         var _command = E50EditorButtons[tag];
+        _command.iframe = iframe;
         _command.setDocument(doc || $document[0]);
         return _command;
       }

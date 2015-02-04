@@ -72,9 +72,10 @@ angular.module('E50Editor')
   // Creates a link
   function LinkCommand() {
     this.execute = function() {
-      var execCommand = taExecCommand(this.document)('p');
+      var sel = rangy.getIframeSelection(this.iframe[0]);
       var url = window.prompt('Link URL:', 'http://');
-      execCommand('createLink', false, url);
+      var doc = this.iframe[0].document || this.iframe[0].contentWindow.document;
+      doc.execCommand('createLink', false, url);
     };
     this.isActive = function() {
       if(!this.document) { return false; }
