@@ -62,8 +62,8 @@ angular.module('E50Editor')
   function InsertCommand(tag, html) {
     this.name = tag;
     this.execute = function() {
-      var execCommand = taExecCommand(this.document)('p');
-      execCommand('insertHTML', false, html);
+      var doc = this.iframe[0].document || this.iframe[0].contentWindow.document || document;
+      doc.execCommand('insertHTML', false, html);
     };
     this.isActive = angular.noop;
     this.setDocument = setDocument;

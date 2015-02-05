@@ -5,7 +5,7 @@ angular.module('E50Editor')
         '<div ng-repeat="img in imagePopovers" ng-show="img.show" ng-attr-class="img-popover-{{img.id}}" ng-mouseenter="img.show=true">',
           '<a href="" ng-click="toggleInput(img)"><i class="fa  fa-ellipsis-v"></i></a>',
           '<form ng-submit="setImageUrl(img)">',
-            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter" ng-show="img.showInput"/>',
+            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter" ng-if="img.showInput"/>',
           '</form>',
         '</div>',
       '</div>'
@@ -83,7 +83,6 @@ angular.module('E50Editor')
           if(img.showInput) {
             $timeout(function() {
               imageElm.focus();
-              console.log('should be in focus');
               if(imageElm[0].setSelectionRange) {
                 imageElm[0].setSelectionRange(0,0);
               } else {

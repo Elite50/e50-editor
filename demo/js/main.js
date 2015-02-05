@@ -1,4 +1,4 @@
-var app = angular.module('app', ['E50Editor', 'ngSanitize', 'textAngular']);
+var app = angular.module('app', ['E50Editor', 'ngSanitize', 'textAngular', 'ngAnimate']);
 app.controller('MainCtrl', function($scope, $http, $interval) {
 
   $scope.iframeId = "iframe1";

@@ -135,6 +135,21 @@ li {
     color:#666666;
     margin-right: 5px;
 }
+
+.image-popovers input[type="text"] {
+    -webkit-transition: all linear 0.3s;
+    transition: all linear 0.3s;
+    position:relative;
+}
+
+.image-popovers input[type="text"].ng-enter {
+    left: 10px;
+}
+
+.image-popovers input[type="text"].ng-enter-active {
+    left: 0;
+}
+
 .image-popovers a {
     font-size: 12px;
 }
