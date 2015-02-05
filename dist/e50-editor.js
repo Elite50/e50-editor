@@ -81,7 +81,7 @@ angular.module('E50Editor')
     };
   }]);
 angular.module('E50Editor')
-  .directive('e50Image', ["$timeout", function($timeout) {
+  .directive('e50Image', ["$timeout", "E50EditorConfig", function($timeout, E50EditorConfig) {
     var template = [
       '<div class="image-popovers">',
         '<div ng-repeat="img in imagePopovers" ng-show="img.show" ng-attr-class="img-popover-{{img.id}}" ng-mouseenter="img.show=true">',
@@ -136,7 +136,7 @@ angular.module('E50Editor')
             var imgElm = angular.element(image);
             imgElm.attr('image-id', i);
             var src = imgElm.attr('src');
-            var isPlaceholder = src.indexOf('images/placeholder.png') !== -1;
+            var isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
             scope.imagePopovers[i] = {
               id: i,
               show: false,
@@ -176,7 +176,7 @@ angular.module('E50Editor')
 
         scope.setImageUrl = function(img) {
           var imageElm = angular.element(images[img.id]);
-          var src = img.src !== "" ? img.src : 'images/placeholder.png';
+          var src = img.src !== "" ? img.src : E50EditorConfig.placeholder;
           imageElm.attr('src', src);
           img.showInput = false;
         };
@@ -761,7 +761,8 @@ angular.module('E50Editor')
 angular.module('E50Editor')
   .factory('E50EditorConfig', function() {
     return {
-      fontAwesome: '../bower_components/font-awesome/css/font-awesome.css'
+      fontAwesome: '../bower_components/font-awesome/css/font-awesome.css',
+      placeholder: 'images/placeholder.png'
     };
   });
 angular.module('E50Editor')
