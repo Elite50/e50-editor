@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.directive('e50Template', function(taSelection, E50Documents, $timeout) {
+.directive('e50Template', function(E50Documents) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ngModel) {
@@ -153,9 +153,7 @@ angular.module('E50Editor')
 
         // Set the caret position to the start of the placeholder
         if(target.hasClass('placeholder')) {
-          var iframeDoc = isIframe ? doc : parentDoc;
-          var sel = taSelection(iframeDoc);
-          sel.setSelectionToElementStart(e.target);
+          //var iframeDoc = isIframe ? doc : parentDoc;
         }
 
         var dataTransfer = e.originalEvent.dataTransfer;

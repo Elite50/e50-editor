@@ -1,4 +1,4 @@
-angular.module('E50Editor', ['textAngular', 'ngSanitize']);
+angular.module('E50Editor', ['ngSanitize']);
 angular.module('E50Editor')
 .directive('e50Editor', function() {
 
@@ -257,7 +257,7 @@ angular.module('E50Editor')
 
   }]);
 angular.module('E50Editor')
-.directive('e50Template', ["taSelection", "E50Documents", "$timeout", function(taSelection, E50Documents, $timeout) {
+.directive('e50Template', ["E50Documents", function(E50Documents) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ngModel) {
@@ -411,9 +411,7 @@ angular.module('E50Editor')
 
         // Set the caret position to the start of the placeholder
         if(target.hasClass('placeholder')) {
-          var iframeDoc = isIframe ? doc : parentDoc;
-          var sel = taSelection(iframeDoc);
-          sel.setSelectionToElementStart(e.target);
+          //var iframeDoc = isIframe ? doc : parentDoc;
         }
 
         var dataTransfer = e.originalEvent.dataTransfer;
@@ -631,6 +629,14 @@ angular.module('E50Editor')
 
 }]);
 angular.module('E50Editor')
+  .factory('E50BrowswerTag', function() {
+    return function(tag){
+      if(!tag) return (_browserDetect.ie <= 8)? 'P' : 'p';
+      else if(tag === '') return (_browserDetect.ie === undefined)? 'div' : (_browserDetect.ie <= 8)? 'P' : 'p';
+      else return (_browserDetect.ie <= 8)? tag.toUpperCase() : tag;
+    };
+  });
+angular.module('E50Editor')
   .factory('E50Documents', function() {
     return {
       docs: {},
@@ -646,7 +652,7 @@ angular.module('E50Editor')
     };
   });
 angular.module('E50Editor')
-.factory('E50EditorButtons', ["taBrowserTag", "taSelection", "taExecCommand", "E50Documents", "E50EditorConfig", function(taBrowserTag, taSelection, taExecCommand, E50Documents, E50EditorConfig) {
+.factory('E50EditorButtons', ["E50BrowswerTag", "E50Documents", "E50EditorConfig", function(E50BrowswerTag, E50Documents, E50EditorConfig) {
 
   /**
    * Each command must implement the given interface 
@@ -670,7 +676,7 @@ angular.module('E50Editor')
     };
     this.execute = function() {
       var newTag = this.isActive() ? 'P' : tag;
-      this.document.execCommand('formatBlock', false, '<'+taBrowserTag(newTag)+'>');
+      this.document.execCommand('formatBlock', false, '<'+E50BrowswerTag(newTag)+'>');
     };
     this.setDocument = setDocument;
   }
@@ -682,25 +688,8 @@ angular.module('E50Editor')
       return this.document.queryCommandState(tag);
     };
     this.execute = function() {
-      var execCommand = taExecCommand(this.document)('p');
-      execCommand(tag);
-    };
-    this.setDocument = setDocument;
-  }
-
-  // This inserts an image at the given cursor position
-  function ImageCommand() {
-    this.name = "image";
-    this.isActive = function() {
-      if(!this.document) { return false; }
-      var selection = taSelection(this.document);
-      var elm = selection.getSelectionElement();
-      return elm.tagName === 'IMG';
-    };
-    this.execute = function() {
-      var execCommand = taExecCommand(this.document)('p');
-      var url = window.prompt('Image url', 'http://');
-      execCommand('insertImage', false, url);
+      var doc = this.iframe[0].document || this.iframe[0].contentWindow.document || document;
+      doc.execCommand(tag);
     };
     this.setDocument = setDocument;
   }
@@ -741,7 +730,6 @@ angular.module('E50Editor')
     buttons[style] = new StyleCommand(style);
   });
 
-  buttons['image']       = new ImageCommand();
   buttons['placeholder'] = new InsertCommand('placeholder', '<img src="'+E50EditorConfig.placeholder+'" class="placeholder" alt="Placeholder"/>');
   buttons['link']        = new LinkCommand();
 

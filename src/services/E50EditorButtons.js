@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.factory('E50EditorButtons', function(taBrowserTag, taSelection, taExecCommand, E50Documents, E50EditorConfig) {
+.factory('E50EditorButtons', function(E50BrowswerTag, E50Documents, E50EditorConfig) {
 
   /**
    * Each command must implement the given interface 
@@ -23,7 +23,7 @@ angular.module('E50Editor')
     };
     this.execute = function() {
       var newTag = this.isActive() ? 'P' : tag;
-      this.document.execCommand('formatBlock', false, '<'+taBrowserTag(newTag)+'>');
+      this.document.execCommand('formatBlock', false, '<'+E50BrowswerTag(newTag)+'>');
     };
     this.setDocument = setDocument;
   }
@@ -35,25 +35,8 @@ angular.module('E50Editor')
       return this.document.queryCommandState(tag);
     };
     this.execute = function() {
-      var execCommand = taExecCommand(this.document)('p');
-      execCommand(tag);
-    };
-    this.setDocument = setDocument;
-  }
-
-  // This inserts an image at the given cursor position
-  function ImageCommand() {
-    this.name = "image";
-    this.isActive = function() {
-      if(!this.document) { return false; }
-      var selection = taSelection(this.document);
-      var elm = selection.getSelectionElement();
-      return elm.tagName === 'IMG';
-    };
-    this.execute = function() {
-      var execCommand = taExecCommand(this.document)('p');
-      var url = window.prompt('Image url', 'http://');
-      execCommand('insertImage', false, url);
+      var doc = this.iframe[0].document || this.iframe[0].contentWindow.document || document;
+      doc.execCommand(tag);
     };
     this.setDocument = setDocument;
   }
@@ -94,7 +77,6 @@ angular.module('E50Editor')
     buttons[style] = new StyleCommand(style);
   });
 
-  buttons['image']       = new ImageCommand();
   buttons['placeholder'] = new InsertCommand('placeholder', '<img src="'+E50EditorConfig.placeholder+'" class="placeholder" alt="Placeholder"/>');
   buttons['link']        = new LinkCommand();
 
