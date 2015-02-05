@@ -125,6 +125,7 @@ angular.module('E50Editor')
           if(isEditArea) { return true; }
           angular.forEach(scope.imagePopovers, function(img) {
             img.show = false;
+            img.showInput = false;
           });
           scope.$apply();
         }
@@ -646,7 +647,7 @@ angular.module('E50Editor')
     };
   });
 angular.module('E50Editor')
-.factory('E50EditorButtons', ["taBrowserTag", "taSelection", "taExecCommand", "E50Documents", function(taBrowserTag, taSelection, taExecCommand, E50Documents) {
+.factory('E50EditorButtons', ["taBrowserTag", "taSelection", "taExecCommand", "E50Documents", "E50EditorConfig", function(taBrowserTag, taSelection, taExecCommand, E50Documents, E50EditorConfig) {
 
   /**
    * Each command must implement the given interface 
@@ -742,7 +743,7 @@ angular.module('E50Editor')
   });
 
   buttons['image']       = new ImageCommand();
-  buttons['placeholder'] = new InsertCommand('placeholder', '<img src="placeholder.png" class="placeholder" alt="Placeholder"/>');
+  buttons['placeholder'] = new InsertCommand('placeholder', '<img src="'+E50EditorConfig.placeholder+'" class="placeholder" alt="Placeholder"/>');
   buttons['link']        = new LinkCommand();
 
   // Expose the commands, so ppl can add there own later

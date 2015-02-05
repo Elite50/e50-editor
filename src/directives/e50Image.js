@@ -43,6 +43,7 @@ angular.module('E50Editor')
           if(isEditArea) { return true; }
           angular.forEach(scope.imagePopovers, function(img) {
             img.show = false;
+            img.showInput = false;
           });
           scope.$apply();
         }
