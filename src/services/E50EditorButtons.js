@@ -73,7 +73,7 @@ angular.module('E50Editor')
   function LinkCommand() {
     this.execute = function() {
       var url = window.prompt('Link URL:', 'http://');
-      var doc = this.iframe[0].document || this.iframe[0].contentWindow.document;
+      var doc = this.iframe[0].document || this.iframe[0].contentWindow.document || document;
       doc.execCommand('createLink', false, url);
     };
     this.isActive = function() {

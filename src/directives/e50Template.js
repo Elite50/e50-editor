@@ -142,6 +142,7 @@ angular.module('E50Editor')
       var dropHandler = function(e) {
         e.preventDefault();
         e.stopPropagation();
+        return false;
 
         var target = angular.element(e.target);
         var editable = target.closest('[editable]');

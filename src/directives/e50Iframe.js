@@ -41,10 +41,8 @@ angular.module('E50Editor')
         // Emit the iframe id and document, in case we want to build our buttons outside of the iframe
         scope.$emit('e50Document', scope.iframeId, true, iframe);
 
-        scope.popoverElm = {};
-
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override" popover-elm="popoverElm">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 

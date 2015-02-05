@@ -51,6 +51,8 @@ angular.module('E50Editor')
             var offset = popoverElm.offset();
             offset.top = offset.top - elm.height() - 10;
 
+            var popover = scope.popovers[popoverElm.attr('popover')];
+
             var extraWidth = 0;
             extraWidth += parseInt(popoverElm.css('padding-right'));
             extraWidth += parseInt(popoverElm.css('margin-right'));
