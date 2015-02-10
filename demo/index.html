@@ -6,6 +6,10 @@
   
   <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" href="styles/demo.css"/>
+
+  <script src="js/config.js"></script>
+
+  <script src="https://dme0ih8comzn4.cloudfront.net/imaging/v1/editor.js"></script>
   
   <script src="../bower_components/jquery/dist/jquery.js"></script>
   <script src="../bower_components/angular/angular.js"></script>
@@ -29,7 +33,7 @@
 
     <div class="container">
       <!--<div e50-editor ng-model="tplHtml" toggle="showHtml"></div>-->
-      <div e50-iframe="{{iframeId}}" ng-model="tplHtml" toggle="showHtml" override="true" buttons="buttons"></div>
+      <div e50-iframe="{{iframeId}}" ng-model="tplHtml" toggle="showHtml" override="true" buttons="buttons" image-saved="imageSaved"></div>
     </div>
 
   </div>

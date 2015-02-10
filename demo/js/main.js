@@ -35,6 +35,12 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
     $scope.$broadcast("e50AddText", $scope.iframeId, $scope.textToAdd);
   };
 
+  $scope.imageSaved = function(url, image) {
+    console.log('image saved');
+    console.log(url);
+    console.log(image);
+  };
+
   //var promise = $interval(function() {
   //  $http.get('http://localhost:3000/demo/template.css').success(function(res) {
   //    console.log(res);

@@ -17,7 +17,8 @@ angular.module('E50Editor')
       buttons: "=?",
       toggle: "=?",
       iframeId: "=?",
-      override: "=?"
+      override: "=?",
+      imageSaved: "=?"
     }
   };
 });

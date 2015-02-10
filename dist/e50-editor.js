@@ -18,7 +18,8 @@ angular.module('E50Editor')
       buttons: "=?",
       toggle: "=?",
       iframeId: "=?",
-      override: "=?"
+      override: "=?",
+      imageSaved: "=?"
     }
   };
 });
@@ -30,7 +31,8 @@ angular.module('E50Editor')
         toggle: "=?",
         buttons: "=?",
         override: "=?",
-        iframeId: "@e50Iframe"
+        iframeId: "@e50Iframe",
+        imageSaved: "=?"
       },
       link: function(scope, elm) {
 
@@ -66,7 +68,7 @@ angular.module('E50Editor')
         scope.$emit('e50Document', scope.iframeId, true, iframe);
 
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override" image-saved="imageSaved">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 
@@ -130,6 +132,52 @@ angular.module('E50Editor')
           scope.$apply();
         }
 
+        function handleDragOver(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+
+        var aviaryEditor = new Aviary.Feather({
+          apiKey: aviaryKey,
+          tools: 'all',
+          onSave: function(imageID, newURL) {
+            console.log(arguments);
+          },
+          onError: function() {
+            console.log(arguments);
+          }
+        });
+
+        function dropHandler(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          var img = angular.element(e.target);
+
+          var file = e.originalEvent.dataTransfer.files[0];
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var aviaryImg = new Image();
+            aviaryImg.src = e.target.result;
+            aviaryEditor.launch({
+              image: aviaryImg,
+              onSave: function(id, url) {
+
+                //EmailService.saveEmailImage({ url: url }).then(function(res) {
+                //  console.log(res);
+                //});
+                scope.imageSaved(url, img);
+                img.attr('src', url);
+                scope.$emit('updateViewValue');
+              }
+            });
+          };
+          reader.readAsDataURL(file);
+
+          return false;
+        }
+
         function getImages() {
           var placeholders = elm.parent().find('.placeholder');
           angular.forEach(placeholders, function(image, i) {
@@ -152,6 +200,12 @@ angular.module('E50Editor')
           // Setup image hover
           placeholders.bind('mouseover', imageHover);
           placeholders.bind('mouseleave', hideImagePopovers);
+
+          placeholders.unbind('dragover',handleDragOver);
+          placeholders.bind('dragover',handleDragOver);
+
+          placeholders.unbind('drop', dropHandler);
+          placeholders.bind('drop', dropHandler);
         }
 
         scope.$watch('html', function(newV, oldV) {
@@ -561,6 +615,11 @@ angular.module('E50Editor')
         var range = sel.getRangeAt(0);
         range.insertNode(document.createTextNode(text));
         ngModel.$setViewValue(elm.html());
+      });
+
+      scope.$on('updateViewValue', function() {
+        ngModel.$setViewValue(elm.html());
+        scope.$apply();
       });
     }
   };

@@ -48,6 +48,52 @@ angular.module('E50Editor')
           scope.$apply();
         }
 
+        function handleDragOver(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+
+        var aviaryEditor = new Aviary.Feather({
+          apiKey: aviaryKey,
+          tools: 'all',
+          onSave: function(imageID, newURL) {
+            console.log(arguments);
+          },
+          onError: function() {
+            console.log(arguments);
+          }
+        });
+
+        function dropHandler(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          var img = angular.element(e.target);
+
+          var file = e.originalEvent.dataTransfer.files[0];
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var aviaryImg = new Image();
+            aviaryImg.src = e.target.result;
+            aviaryEditor.launch({
+              image: aviaryImg,
+              onSave: function(id, url) {
+
+                //EmailService.saveEmailImage({ url: url }).then(function(res) {
+                //  console.log(res);
+                //});
+                scope.imageSaved(url, img);
+                img.attr('src', url);
+                scope.$emit('updateViewValue');
+              }
+            });
+          };
+          reader.readAsDataURL(file);
+
+          return false;
+        }
+
         function getImages() {
           var placeholders = elm.parent().find('.placeholder');
           angular.forEach(placeholders, function(image, i) {
@@ -70,6 +116,12 @@ angular.module('E50Editor')
           // Setup image hover
           placeholders.bind('mouseover', imageHover);
           placeholders.bind('mouseleave', hideImagePopovers);
+
+          placeholders.unbind('dragover',handleDragOver);
+          placeholders.bind('dragover',handleDragOver);
+
+          placeholders.unbind('drop', dropHandler);
+          placeholders.bind('drop', dropHandler);
         }
 
         scope.$watch('html', function(newV, oldV) {

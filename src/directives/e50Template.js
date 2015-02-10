@@ -304,6 +304,11 @@ angular.module('E50Editor')
         range.insertNode(document.createTextNode(text));
         ngModel.$setViewValue(elm.html());
       });
+
+      scope.$on('updateViewValue', function() {
+        ngModel.$setViewValue(elm.html());
+        scope.$apply();
+      });
     }
   };
 });
