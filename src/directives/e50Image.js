@@ -32,7 +32,7 @@ angular.module('E50Editor')
           var popoverElm = elm.find('.img-popover-' + id);
           $timeout(function() {
             css.top = css.top + 5;
-            css.left = css.left + target.width() - popoverElm.width() - 15;
+            css.left = css.left + target.width() - popoverElm.width() - 5;
             elm.css(css);
             elm.animate({opacity: 1}, 200);
           });
@@ -45,7 +45,7 @@ angular.module('E50Editor')
           if(isEditArea) { return true; }
           angular.forEach(scope.imagePopovers, function(img) {
             img.show = false;
-            img.showInput = false;
+            //img.showInput = false;
           });
           scope.$apply();
         }

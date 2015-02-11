@@ -44,8 +44,8 @@
 }
 
 .image-edit {
-  position:absolute;
-  width: 193px;
+  position: absolute;
+  width: 205px;
   input {
     float: left;
     padding: 5px;
@@ -73,6 +73,8 @@
     float: right;
     color: #00aeef;
     line-height: 24px;
+    padding: 0 10px;
+    margin-left: 3px;
   }
 
   i {
