@@ -23,9 +23,10 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
     console.log($scope.tplHtml);
   };
 
-  $scope.$on('e50Document', function($event, name) {
+  $scope.$on('e50Document', function($event, name, ready, iframe) {
     if(name === $scope.iframeId) {
       $scope.iframeLoaded = true;
+      iframe.contents().find('head').append('<link href="../dist/e50-editor.css" rel="stylesheet">');
     }
   });
 

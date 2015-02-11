@@ -1,12 +1,12 @@
 angular.module('E50Editor')
   .directive('e50Image', function($timeout, E50EditorConfig) {
     var template = [
-      '<div class="image-popovers">',
-        '<div ng-repeat="img in imagePopovers" ng-show="img.show" ng-attr-class="img-popover-{{img.id}}" ng-mouseenter="img.show=true" ng-leave="img.show=true">',
-          '<a href="" ng-click="toggleInput(img)"><i class="fa  fa-ellipsis-v"></i></a>',
+      '<div class="popovers">',
+        '<div ng-repeat="img in imagePopovers" ng-show="img.show" ng-attr-class="img-popover-{{img.id}} image-edit"  ng-mouseenter="img.show=true">',
+          '<a href="" ng-click="toggleInput(img)" class="edit"><i class="fa  fa-ellipsis-v"></i></a>',
           '<form ng-submit="setImageUrl(img)">',
-            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter" ng-if="!img.showInput"/>',
-            '<a href="" ng-click="openAviary(img)" ng-if="!isPlaceholder(img) && !img.showInput ">Edit</a>',
+            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter" ng-if="img.showInput"/>',
+            '<a href="" ng-click="openAviary(img)" class="edit-photo" ng-if="img.showInput">Edit</a>',
           '</form>',
         '</div>',
       '</div>'
@@ -14,7 +14,8 @@ angular.module('E50Editor')
     return {
       template: template.join(''),
       link: function(scope, elm) {
-        elm.css({ position:'absolute', opacity: 0 });
+        //elm.css({ position:'absolute', opacity: 0 });
+        elm.css({ position:'absolute' });
         // Images
         var images = {};
         scope.imagePopovers = {};
@@ -31,7 +32,7 @@ angular.module('E50Editor')
           var popoverElm = elm.find('.img-popover-' + id);
           $timeout(function() {
             css.top = css.top + 5;
-            css.left = css.left + target.width() - popoverElm.width() - 10;
+            css.left = css.left + target.width() - popoverElm.width() - 15;
             elm.css(css);
             elm.animate({opacity: 1}, 200);
           });
@@ -89,6 +90,10 @@ angular.module('E50Editor')
         }
 
         scope.openAviary = function(img) {
+          if(scope.isPlaceholder(img)) {
+            alert("Please upload an image to edit");
+            return;
+          }
           var imageElm = angular.element(images[img.id]);
           var src = imageElm.attr('src');
           var isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;

@@ -35,27 +35,33 @@
 .link-manager .fa-unlink {
   padding-left: 5px; }
 
-.image-popovers input[type="text"] {
-  border: 0;
-  border-bottom: 1px solid lightgray;
-  padding: 5px;
-  width: 200px;
-  float: right;
-  font-size: 12px;
-  color: #666666;
-  margin-right: 5px; }
+.popovers {
+  position: relative; }
 
-.image-popovers a {
-  font-size: 12px; }
-
-.image-popovers .fa-ellipsis-v {
-  padding: 7px;
-  font-size: 16px;
-  float: right; }
-
-.image-popovers > div {
-  width: 222px; }
-
-.image-popovers form {
-  margin: 0;
-  padding: 0; }
+.image-edit {
+  position: absolute;
+  width: 193px; }
+  .image-edit input {
+    float: left;
+    padding: 5px;
+    border: 0;
+    border-bottom: 1px solid lightgray; }
+    .image-edit input:focus {
+      outline: none;
+      border-bottom: 1px solid #00aeef; }
+  .image-edit .edit-photo {
+    float: left;
+    font-size: 12px;
+    color: #00aeef;
+    line-height: 23px;
+    border-bottom: 1px solid lightgray;
+    background-color: #ffffff;
+    padding: 0 10px;
+    background-color: #f4f4f4;
+    text-decoration: none; }
+  .image-edit .edit {
+    float: right;
+    color: #00aeef;
+    line-height: 24px; }
+  .image-edit i {
+    line-height: 24px; }
