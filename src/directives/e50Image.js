@@ -2,10 +2,11 @@ angular.module('E50Editor')
   .directive('e50Image', function($timeout, E50EditorConfig) {
     var template = [
       '<div class="image-popovers">',
-        '<div ng-repeat="img in imagePopovers" ng-show="img.show" ng-attr-class="img-popover-{{img.id}}" ng-mouseenter="img.show=true">',
+        '<div ng-repeat="img in imagePopovers" ng-show="img.show" ng-attr-class="img-popover-{{img.id}}" ng-mouseenter="img.show=true" ng-leave="img.show=true">',
           '<a href="" ng-click="toggleInput(img)"><i class="fa  fa-ellipsis-v"></i></a>',
           '<form ng-submit="setImageUrl(img)">',
-            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter" ng-if="img.showInput"/>',
+            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter" ng-if="!img.showInput"/>',
+            '<a href="" ng-click="openAviary(img)" ng-if="!isPlaceholder(img) && !img.showInput ">Edit</a>',
           '</form>',
         '</div>',
       '</div>'
@@ -57,9 +58,6 @@ angular.module('E50Editor')
         var aviaryEditor = new Aviary.Feather({
           apiKey: aviaryKey,
           tools: 'all',
-          onSave: function(imageID, newURL) {
-            console.log(arguments);
-          },
           onError: function() {
             console.log(arguments);
           }
@@ -79,10 +77,6 @@ angular.module('E50Editor')
             aviaryEditor.launch({
               image: aviaryImg,
               onSave: function(id, url) {
-
-                //EmailService.saveEmailImage({ url: url }).then(function(res) {
-                //  console.log(res);
-                //});
                 scope.imageSaved(url, img);
                 img.attr('src', url);
                 scope.$emit('updateViewValue');
@@ -93,6 +87,31 @@ angular.module('E50Editor')
 
           return false;
         }
+
+        scope.openAviary = function(img) {
+          var imageElm = angular.element(images[img.id]);
+          var src = imageElm.attr('src');
+          var isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
+          if(isPlaceholder) { return false; }
+
+          var aviaryImg = new Image();
+          aviaryImg.src = src;
+
+          aviaryEditor.launch({
+            image: aviaryImg,
+            onSave: function(id, url) {
+              scope.imageSaved(url, imageElm);
+              imageElm.attr('src', url);
+              scope.$emit('updateViewValue');
+            }
+          });
+        };
+
+        scope.isPlaceholder = function(img) {
+          var elm = angular.element(images[img.id]);
+          var src = elm.attr('src');
+          return src.indexOf(E50EditorConfig.placeholder) !== -1;
+        };
 
         function getImages() {
           var placeholders = elm.parent().find('.placeholder');
