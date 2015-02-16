@@ -46,9 +46,12 @@
     padding: 5px;
     border: 0;
     border-bottom: 1px solid lightgray; }
-    .image-edit input:focus {
+    .image-edit input[type="text"]:focus {
       outline: none;
       border-bottom: 1px solid #00aeef; }
+  .image-edit input[type="file"] {
+    border: 0;
+    font-size: 10px; }
   .image-edit .edit-photo {
     float: left;
     font-size: 12px;
@@ -72,4 +75,5 @@
     line-height: 24px; }
   .image-edit form {
     float: right;
-    margin-right: 10px; }
+    margin-right: 10px;
+    margin-bottom: 0; }

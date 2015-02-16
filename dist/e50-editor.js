@@ -92,8 +92,11 @@ angular.module('E50Editor')
           '<a href="" ng-click="toggleInput(img)" class="edit"><i class="fa  fa-ellipsis-v"></i></a>',
           '<a href="" class="trash"><i class="fa fa-trash-o" ng-click="trash(img)"></i></a>',
           '<form ng-submit="setImageUrl(img)">',
-            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter" ng-if="img.showInput"/>',
+            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter or" ng-if="img.showInput"/>',
             '<a href="" ng-click="openAviary(img)" class="edit-photo" ng-if="img.showInput">Edit</a>',
+          '</form>',
+          '<form ng-show="img.showInput">',
+            '<input type="file" ng-attr-id="file-upload-{{img.id}}"/>',
           '</form>',
         '</div>',
       '</div>'
@@ -275,6 +278,40 @@ angular.module('E50Editor')
           imageElm.attr('src', src);
           img.showInput = false;
         };
+
+        function fileChangeHandler(e) {
+          var input = angular.element(e.target);
+          var imgId = input.attr('id').split('-').pop();
+          var img = angular.element(images[imgId]);
+          var aviaryImg = new Image();
+          var file = e.target.files[0];
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            aviaryImg.src = e.target.result;
+            aviaryEditor.launch({
+              image: aviaryImg,
+              onSave: function(id, url) {
+                scope.imageSaved(url, img);
+                input.val("");
+                scope.$emit('updateViewValue');
+              },
+              onClose: function() {
+                input.val("");
+              }
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+
+        scope.$watch('imagePopovers', function(newV) {
+          if(!newV) { return; }
+          var inputs = elm.find('input');
+          angular.forEach(inputs, function(input) {
+            var inputElm = angular.element(input);
+            inputElm.unbind('change', fileChangeHandler);
+            inputElm.bind('change', fileChangeHandler);
+          })
+        }, true);
       }
     };
   }]);

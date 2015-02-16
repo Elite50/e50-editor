@@ -51,10 +51,14 @@
     padding: 5px;
     border: 0;
     border-bottom: 1px solid lightgray;
-    &:focus {
+    &[type="text"]:focus {
       outline: none;
       border-bottom: 1px solid #00aeef;
     }
+  }
+  input[type="file"] {
+    border: 0;
+    font-size: 10px;
   }
 
   .edit-photo {
@@ -89,6 +93,7 @@
   form {
     float:right;
     margin-right:10px;
+    margin-bottom: 0;
   }
 }
 
