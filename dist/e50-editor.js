@@ -660,7 +660,6 @@ angular.module('E50Editor')
 
       scope.$on('updateViewValue', function() {
         ngModel.$setViewValue(elm.html());
-        scope.$apply();
       });
     }
   };
