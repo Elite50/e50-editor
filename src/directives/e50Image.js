@@ -128,6 +128,8 @@ angular.module('E50Editor')
         scope.trash = function(img) {
           var elm = angular.element(images[img.id]);
           if(!scope.isPlaceholder(img)) {
+            var confirm = window.confirm("Are you sure you want to delete this image?");
+            if(!confirm) { return false; }
             elm.attr('src', E50EditorConfig.placeholder);
           } else {
             elm.remove();
