@@ -4,6 +4,7 @@ angular.module('E50Editor')
       '<div class="popovers">',
         '<div ng-repeat="img in imagePopovers" ng-show="img.show" ng-attr-class="img-popover-{{img.id}} image-edit"  ng-mouseenter="img.show=true">',
           '<a href="" ng-click="toggleInput(img)" class="edit"><i class="fa  fa-ellipsis-v"></i></a>',
+          '<a href="" class="trash"><i class="fa fa-trash-o" ng-click="trash(img)"></i></a>',
           '<form ng-submit="setImageUrl(img)">',
             '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter" ng-if="img.showInput"/>',
             '<a href="" ng-click="openAviary(img)" class="edit-photo" ng-if="img.showInput">Edit</a>',
@@ -14,8 +15,6 @@ angular.module('E50Editor')
     return {
       template: template.join(''),
       link: function(scope, elm) {
-
-        console.log(scope.aviaryOptions);
 
         scope.aviaryOptions = scope.aviaryOptions || 'all';
 
@@ -121,6 +120,17 @@ angular.module('E50Editor')
           var elm = angular.element(images[img.id]);
           var src = elm.attr('src');
           return src.indexOf(E50EditorConfig.placeholder) !== -1;
+        };
+
+        scope.trash = function(img) {
+          var elm = angular.element(images[img.id]);
+          if(!scope.isPlaceholder(img)) {
+            elm.attr('src', E50EditorConfig.placeholder);
+          } else {
+            elm.remove();
+          }
+          img.show = false;
+          scope.$emit('updateViewValue');
         };
 
         function getImages() {

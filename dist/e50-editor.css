@@ -40,7 +40,7 @@
 
 .image-edit {
   position: absolute;
-  width: 205px; }
+  width: 225px; }
   .image-edit input {
     float: left;
     padding: 5px;
@@ -65,5 +65,11 @@
     line-height: 24px;
     padding: 0 10px;
     margin-left: 3px; }
+  .image-edit .trash {
+    float: right;
+    color: #00aeef; }
   .image-edit i {
     line-height: 24px; }
+  .image-edit form {
+    float: right;
+    margin-right: 10px; }
