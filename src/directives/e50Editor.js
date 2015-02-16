@@ -18,7 +18,8 @@ angular.module('E50Editor')
       toggle: "=?",
       iframeId: "=?",
       override: "=?",
-      imageSaved: "=?"
+      imageSaved: "=?",
+      aviaryOptions: "=?"
     }
   };
 });

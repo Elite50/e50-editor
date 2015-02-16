@@ -42,6 +42,8 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
     console.log(image);
   };
 
+  $scope.aviaryOptions = ['crop', 'resize', 'orientation', 'text'];
+
   //var promise = $interval(function() {
   //  $http.get('http://localhost:3000/demo/template.css').success(function(res) {
   //    console.log(res);

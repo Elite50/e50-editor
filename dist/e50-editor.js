@@ -19,7 +19,8 @@ angular.module('E50Editor')
       toggle: "=?",
       iframeId: "=?",
       override: "=?",
-      imageSaved: "=?"
+      imageSaved: "=?",
+      aviaryOptions: "=?"
     }
   };
 });
@@ -32,7 +33,8 @@ angular.module('E50Editor')
         buttons: "=?",
         override: "=?",
         iframeId: "@e50Iframe",
-        imageSaved: "=?"
+        imageSaved: "=?",
+        aviaryOptions: "=?"
       },
       link: function(scope, elm) {
 
@@ -68,7 +70,7 @@ angular.module('E50Editor')
         scope.$emit('e50Document', scope.iframeId, true, iframe);
 
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override" image-saved="imageSaved">initial editable content</div>';
+        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override" image-saved="imageSaved" aviary-options="aviaryOptions">initial editable content</div>';
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 
@@ -98,6 +100,11 @@ angular.module('E50Editor')
     return {
       template: template.join(''),
       link: function(scope, elm) {
+
+        console.log(scope.aviaryOptions);
+
+        scope.aviaryOptions = scope.aviaryOptions || 'all';
+
         //elm.css({ position:'absolute', opacity: 0 });
         elm.css({ position:'absolute' });
         // Images
@@ -142,7 +149,7 @@ angular.module('E50Editor')
 
         var aviaryEditor = new Aviary.Feather({
           apiKey: aviaryKey,
-          tools: 'all',
+          tools: scope.aviaryOptions,
           onError: function() {
             console.log(arguments);
           }

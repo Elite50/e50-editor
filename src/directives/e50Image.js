@@ -14,6 +14,11 @@ angular.module('E50Editor')
     return {
       template: template.join(''),
       link: function(scope, elm) {
+
+        console.log(scope.aviaryOptions);
+
+        scope.aviaryOptions = scope.aviaryOptions || 'all';
+
         //elm.css({ position:'absolute', opacity: 0 });
         elm.css({ position:'absolute' });
         // Images
@@ -58,7 +63,7 @@ angular.module('E50Editor')
 
         var aviaryEditor = new Aviary.Feather({
           apiKey: aviaryKey,
-          tools: 'all',
+          tools: scope.aviaryOptions,
           onError: function() {
             console.log(arguments);
           }
