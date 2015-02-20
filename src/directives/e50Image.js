@@ -64,7 +64,7 @@ angular.module('E50Editor')
         }
 
         var aviaryEditor = new Aviary.Feather({
-          apiKey: aviaryKey,
+          apiKey: E50EditorConfig.aviaryKey,
           tools: scope.aviaryOptions,
           onError: function() {
             console.log(arguments);

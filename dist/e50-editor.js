@@ -150,7 +150,7 @@ angular.module('E50Editor')
         }
 
         var aviaryEditor = new Aviary.Feather({
-          apiKey: aviaryKey,
+          apiKey: E50EditorConfig.aviaryKey,
           tools: scope.aviaryOptions,
           onError: function() {
             console.log(arguments);
@@ -890,7 +890,8 @@ angular.module('E50Editor')
   .factory('E50EditorConfig', function() {
     return {
       fontAwesome: '../bower_components/font-awesome/css/font-awesome.css',
-      placeholder: 'images/placeholder.png'
+      placeholder: 'images/placeholder.png',
+      aviaryKey: null
     };
   });
 angular.module('E50Editor')
