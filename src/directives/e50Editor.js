@@ -6,7 +6,7 @@ angular.module('E50Editor')
     '<div e50-image class="e50-image"></div>',
     '<div e50-toolbars buttons="buttons" iframe-id="iframeId" override="override"></div>',
     '<div class="template" e50-template ng-model="html" ng-show="!toggle"></div>',
-    '<ng-include src="footerTpl"></ng-include>',
+    '<ng-include src="footerTpl" ng-hide="toggle"></ng-include>',
     '<textarea ng-model="html" ng-show="toggle" style="width:100%;height:100%;border: 1px solid #e4e4e4;padding:15px;"></textarea>'
   ];
 
