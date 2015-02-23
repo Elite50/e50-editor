@@ -601,7 +601,6 @@ angular.module('E50Editor')
 
       // Unbind our drop events when the scope is destroyed
       scope.$on('$destroy', function() {
-        elm.unbind("drop", dropHandler);
         parentDoc.unbind('mousedown', popoverHandler);
       });
 
