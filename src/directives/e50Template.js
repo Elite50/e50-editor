@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.directive('e50Template', function(E50Documents) {
+.directive('e50Template', function(E50Documents, E50EditorConfig) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ngModel) {
@@ -12,13 +12,13 @@ angular.module('E50Editor')
       }
 
       // Track the number of editable areas
-      var numOfEditables = $(elm).find('[editable]').length;
+      var numOfEditables = $(elm).find('['+E50EditorConfig.attrs.editable+']').length;
 
       // Setup the buttons for each editable area
       function getButtons() {
 
         // Recheck editable areas
-        var newEditables = $(elm).find('[editable]');
+        var newEditables = $(elm).find('['+E50EditorConfig.attrs.editable+']');
 
         // Don't re-add editable areas
         if(newEditables.length === numOfEditables) { return false; }
@@ -33,9 +33,9 @@ angular.module('E50Editor')
         angular.forEach(newEditables, function (editable) {
           var e = angular.element(editable);
           e.attr('contenteditable', true);
-          scope.buttons[e.attr('editable')] = {
+          scope.buttons[e.attr(E50EditorConfig.attrs.editable)] = {
             focused: false,
-            buttons: e.attr("format") ? e.attr('format').split(',') : []
+            buttons: e.attr(E50EditorConfig.attrs.format) ? e.attr(E50EditorConfig.attrs.format).split(',') : []
           };
         });
 
@@ -51,7 +51,7 @@ angular.module('E50Editor')
       // On mousedown, toggle focused property for each editable area
       function mouseDownHandler(e) {
         var target = $(e.target);
-        var editable = target.closest('[editable]');
+        var editable = target.closest('['+E50EditorConfig.attrs.editable+']');
         var button   = target.closest('.format-button');
 
         // Blur all editable areas, if we didn't click on anything associated with editing
@@ -64,7 +64,7 @@ angular.module('E50Editor')
         }
 
         // Get the editable area's id
-        var id = editable.attr("editable");
+        var id = editable.attr(E50EditorConfig.attrs.editable);
 
         // Toggle focused property
         if(scope.buttons[id]) {
@@ -145,7 +145,7 @@ angular.module('E50Editor')
         return false;
 
         var target = angular.element(e.target);
-        var editable = target.closest('[editable]');
+        var editable = target.closest('['+E50EditorConfig.attrs.editable+']');
 
         if(!editable.length) {
           return false;
@@ -204,8 +204,8 @@ angular.module('E50Editor')
       function popoverHandler(e) {
         var target = angular.element(e.target);
         var popover  = target.closest('.e50-popover');
-        if(!target.attr('popover')) {
-          target = target.closest('[popover]');
+        if(!target.attr(E50EditorConfig.attrs.popover)) {
+          target = target.closest('['+E50EditorConfig.attrs.popover+']');
         }
         if(!popover.length && !target.length) {
           scope.showPopover = false;
@@ -229,19 +229,19 @@ angular.module('E50Editor')
       var popoverElms = {};
       function getPopovers() {
         var html = angular.element(elm);
-        var popovers = html.find('[popover]');
+        var popovers = html.find('['+E50EditorConfig.attrs.popover+']');
         if(popovers.length === popoverLength) { return false; }
         popoverLength = popovers.length;
         popoverElms = {};
         scope.popovers = {};
         angular.forEach(popovers, function(popover, i) {
           var popoverElm = angular.element(popover);
-          var id = popoverElm.attr('popover');
+          var id = popoverElm.attr(E50EditorConfig.attrs.popover);
           if(id === 'false') { return; }
           while (popoverElms[id]) {
             id += i;
           }
-          popoverElm.attr('popover', id);
+          popoverElm.attr(E50EditorConfig.attrs.popover, id);
           popoverElms[id] = popoverElm;
           scope.popovers[id] = {
             id: id,
@@ -279,14 +279,14 @@ angular.module('E50Editor')
           target = target.closest('a');
         }
         if(isLink) {
-          var id = target.attr('popover');
+          var id = target.attr(E50EditorConfig.attrs.popover);
           if(id === 'false') { return; }
           if(!id) {
             id = "link:1";
             while(popoverElms[id]) {
               id += 1;
             }
-            target.attr('popover', id);
+            target.attr(E50EditorConfig.attrs.popover, id);
             popoverElms[id] = target;
             ngModel.$setViewValue(elm.html());
             scope.$apply();

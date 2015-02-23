@@ -43,4 +43,6 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
 
   $scope.aviaryOptions = ['crop', 'resize', 'orientation', 'text'];
 
+  $scope.footerTpl = 'templates/email-footer.tpl.html';
+
 });

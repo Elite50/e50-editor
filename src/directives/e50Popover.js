@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-  .directive('e50Popover', function($timeout, E50Documents) {
+  .directive('e50Popover', function($timeout, E50Documents, E50EditorConfig) {
 
     var template = [
       '<div class="link-manager" ng-repeat="popover in popovers" ng-show="popover.show">',
@@ -38,7 +38,7 @@ angular.module('E50Editor')
         };
         scope.$on('e50Popover', function(ev, popoverElm) {
           linkElement = popoverElm;
-          var id = popoverElm.attr('popover');
+          var id = popoverElm.attr(E50EditorConfig.attrs.popover);
           angular.forEach(scope.popovers, function(popover, key) {
             popover.show = (key === id) && id !== 'false';
           });
@@ -51,7 +51,7 @@ angular.module('E50Editor')
             var offset = popoverElm.offset();
             offset.top = offset.top - elm.height() - 10;
 
-            var popover = scope.popovers[popoverElm.attr('popover')];
+            var popover = scope.popovers[popoverElm.attr(E50EditorConfig.attrs.popover)];
 
             var extraWidth = 0;
             extraWidth += parseInt(popoverElm.css('padding-right'));

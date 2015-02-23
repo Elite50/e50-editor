@@ -7,6 +7,7 @@ angular.module('E50Editor')
     '<div e50-image class="e50-image"></div>',
     '<div e50-toolbars buttons="buttons" iframe-id="iframeId" override="override"></div>',
     '<div class="template" e50-template ng-model="html" ng-show="!toggle"></div>',
+    '<ng-include src="footerTpl"></ng-include>',
     '<textarea ng-model="html" ng-show="toggle" style="width:100%;height:100%;border: 1px solid #e4e4e4;padding:15px;"></textarea>'
   ];
 
@@ -20,7 +21,8 @@ angular.module('E50Editor')
       iframeId: "=?",
       override: "=?",
       imageSaved: "=?",
-      aviaryOptions: "=?"
+      aviaryOptions: "=?",
+      footerTpl:'='
     }
   };
 });
@@ -34,7 +36,8 @@ angular.module('E50Editor')
         override: "=?",
         iframeId: "@e50Iframe",
         imageSaved: "=?",
-        aviaryOptions: "=?"
+        aviaryOptions: "=?",
+        footerTpl: '='
       },
       link: function(scope, elm) {
 
@@ -70,7 +73,19 @@ angular.module('E50Editor')
         scope.$emit('e50Document', scope.iframeId, true, iframe);
 
         // Compile and append the e50-editor directive
-        var directive = '<div e50-editor ng-model="html" toggle="toggle" buttons="buttons" iframe-id="iframeId" override="override" image-saved="imageSaved" aviary-options="aviaryOptions">initial editable content</div>';
+        var directive = [
+          '<div e50-editor',
+            'ng-model="html"',
+            'toggle="toggle"',
+            'buttons="buttons"',
+            'iframe-id="iframeId"',
+            'override="override"',
+            'image-saved="imageSaved"',
+            'aviary-options="aviaryOptions"',
+            'footer-tpl="footerTpl">',
+          'initial editable content</div>'
+        ].join(' ');
+
         var directiveElm = $compile(directive)(scope);
         body.append(directiveElm);
 
@@ -318,7 +333,7 @@ angular.module('E50Editor')
     };
   }]);
 angular.module('E50Editor')
-  .directive('e50Popover', ["$timeout", "E50Documents", function($timeout, E50Documents) {
+  .directive('e50Popover', ["$timeout", "E50Documents", "E50EditorConfig", function($timeout, E50Documents, E50EditorConfig) {
 
     var template = [
       '<div class="link-manager" ng-repeat="popover in popovers" ng-show="popover.show">',
@@ -357,7 +372,7 @@ angular.module('E50Editor')
         };
         scope.$on('e50Popover', function(ev, popoverElm) {
           linkElement = popoverElm;
-          var id = popoverElm.attr('popover');
+          var id = popoverElm.attr(E50EditorConfig.attrs.popover);
           angular.forEach(scope.popovers, function(popover, key) {
             popover.show = (key === id) && id !== 'false';
           });
@@ -370,7 +385,7 @@ angular.module('E50Editor')
             var offset = popoverElm.offset();
             offset.top = offset.top - elm.height() - 10;
 
-            var popover = scope.popovers[popoverElm.attr('popover')];
+            var popover = scope.popovers[popoverElm.attr(E50EditorConfig.attrs.popover)];
 
             var extraWidth = 0;
             extraWidth += parseInt(popoverElm.css('padding-right'));
@@ -391,7 +406,7 @@ angular.module('E50Editor')
 
   }]);
 angular.module('E50Editor')
-.directive('e50Template', ["E50Documents", function(E50Documents) {
+.directive('e50Template', ["E50Documents", "E50EditorConfig", function(E50Documents, E50EditorConfig) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ngModel) {
@@ -404,13 +419,13 @@ angular.module('E50Editor')
       }
 
       // Track the number of editable areas
-      var numOfEditables = $(elm).find('[editable]').length;
+      var numOfEditables = $(elm).find('['+E50EditorConfig.attrs.editable+']').length;
 
       // Setup the buttons for each editable area
       function getButtons() {
 
         // Recheck editable areas
-        var newEditables = $(elm).find('[editable]');
+        var newEditables = $(elm).find('['+E50EditorConfig.attrs.editable+']');
 
         // Don't re-add editable areas
         if(newEditables.length === numOfEditables) { return false; }
@@ -425,9 +440,9 @@ angular.module('E50Editor')
         angular.forEach(newEditables, function (editable) {
           var e = angular.element(editable);
           e.attr('contenteditable', true);
-          scope.buttons[e.attr('editable')] = {
+          scope.buttons[e.attr(E50EditorConfig.attrs.editable)] = {
             focused: false,
-            buttons: e.attr("format") ? e.attr('format').split(',') : []
+            buttons: e.attr(E50EditorConfig.attrs.format) ? e.attr(E50EditorConfig.attrs.format).split(',') : []
           };
         });
 
@@ -443,7 +458,7 @@ angular.module('E50Editor')
       // On mousedown, toggle focused property for each editable area
       function mouseDownHandler(e) {
         var target = $(e.target);
-        var editable = target.closest('[editable]');
+        var editable = target.closest('['+E50EditorConfig.attrs.editable+']');
         var button   = target.closest('.format-button');
 
         // Blur all editable areas, if we didn't click on anything associated with editing
@@ -456,7 +471,7 @@ angular.module('E50Editor')
         }
 
         // Get the editable area's id
-        var id = editable.attr("editable");
+        var id = editable.attr(E50EditorConfig.attrs.editable);
 
         // Toggle focused property
         if(scope.buttons[id]) {
@@ -537,7 +552,7 @@ angular.module('E50Editor')
         return false;
 
         var target = angular.element(e.target);
-        var editable = target.closest('[editable]');
+        var editable = target.closest('['+E50EditorConfig.attrs.editable+']');
 
         if(!editable.length) {
           return false;
@@ -596,8 +611,8 @@ angular.module('E50Editor')
       function popoverHandler(e) {
         var target = angular.element(e.target);
         var popover  = target.closest('.e50-popover');
-        if(!target.attr('popover')) {
-          target = target.closest('[popover]');
+        if(!target.attr(E50EditorConfig.attrs.popover)) {
+          target = target.closest('['+E50EditorConfig.attrs.popover+']');
         }
         if(!popover.length && !target.length) {
           scope.showPopover = false;
@@ -621,19 +636,19 @@ angular.module('E50Editor')
       var popoverElms = {};
       function getPopovers() {
         var html = angular.element(elm);
-        var popovers = html.find('[popover]');
+        var popovers = html.find('['+E50EditorConfig.attrs.popover+']');
         if(popovers.length === popoverLength) { return false; }
         popoverLength = popovers.length;
         popoverElms = {};
         scope.popovers = {};
         angular.forEach(popovers, function(popover, i) {
           var popoverElm = angular.element(popover);
-          var id = popoverElm.attr('popover');
+          var id = popoverElm.attr(E50EditorConfig.attrs.popover);
           if(id === 'false') { return; }
           while (popoverElms[id]) {
             id += i;
           }
-          popoverElm.attr('popover', id);
+          popoverElm.attr(E50EditorConfig.attrs.popover, id);
           popoverElms[id] = popoverElm;
           scope.popovers[id] = {
             id: id,
@@ -671,14 +686,14 @@ angular.module('E50Editor')
           target = target.closest('a');
         }
         if(isLink) {
-          var id = target.attr('popover');
+          var id = target.attr(E50EditorConfig.attrs.popover);
           if(id === 'false') { return; }
           if(!id) {
             id = "link:1";
             while(popoverElms[id]) {
               id += 1;
             }
-            target.attr('popover', id);
+            target.attr(E50EditorConfig.attrs.popover, id);
             popoverElms[id] = target;
             ngModel.$setViewValue(elm.html());
             scope.$apply();
@@ -891,7 +906,12 @@ angular.module('E50Editor')
     return {
       fontAwesome: '../bower_components/font-awesome/css/font-awesome.css',
       placeholder: 'images/placeholder.png',
-      aviaryKey: null
+      aviaryKey: null,
+      attrs: {
+        editable: 'cs-editable',
+        format: 'cs-format',
+        popover: 'cs-popover'
+      }
     };
   });
 angular.module('E50Editor')
