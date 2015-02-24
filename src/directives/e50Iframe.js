@@ -18,13 +18,6 @@ angular.module('E50Editor')
         // Allow the ability to pass in a template url
         var iframe = angular.element(document.createElement('iframe'));
 
-        // Remove all traces of the iframe
-        scope.$on('$destroy', function() {
-          iframe.remove();
-          delete E50Documents.docs[scope.id];
-          scope.$emit('e50Document', scope.id, false);
-        });
-
         // Attach the iframe
         elm.html(iframe);
 
