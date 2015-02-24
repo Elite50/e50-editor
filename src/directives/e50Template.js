@@ -226,7 +226,12 @@ angular.module('E50Editor')
         if(id !== scope.iframeId) { return false; }
         var sel = rangy.getIframeSelection(iframe[0]);
         var range = sel.getRangeAt(0);
-        range.insertNode(document.createTextNode(text));
+        var node = document.createTextNode(text);
+        range.collapse(false);
+        range.insertNode(node);
+        range.collapseAfter(node);
+        sel.setSingleRange(range);
+        iframe[0].contentWindow.focus();
         ngModel.$setViewValue(elm.html());
       });
 
