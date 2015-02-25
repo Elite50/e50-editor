@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.directive('e50Template', function(E50Documents, E50EditorConfig) {
+.directive('e50Template', function(E50Documents, E50EditorConfig, $sanitize) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ngModel) {
@@ -117,6 +117,14 @@ angular.module('E50Editor')
       ngModel.$render = function() {
         elm.html(ngModel.$viewValue);
       };
+
+      // Remove script tags
+      ngModel.$formatters.push(function(html) {
+        var elm = angular.element(html);
+        var scripts = elm.find('script');
+        scripts.remove();
+        return elm[0].outerHTML;
+      });
 
       // On every keyup, sync the view with the model (scope.html)
       elm.bind('keyup', function(e) {
