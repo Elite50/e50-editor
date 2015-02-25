@@ -3,7 +3,7 @@ angular.module('E50Editor')
     return {
       fontAwesome: '../bower_components/font-awesome/css/font-awesome.css',
       placeholder: 'images/placeholder.png',
-      aviaryKey: null,
+      aviaryKey: aviaryKey || '',
       attrs: {
         editable: 'cs-editable',
         format: 'cs-format',

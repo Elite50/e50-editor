@@ -3,9 +3,9 @@ angular.module('E50Editor')
 
     var template = [
       '<div class="link-manager" ng-repeat="popover in popovers" ng-show="popover.show">',
-      '<input type="text" ng-model="popover.link" />',
-      '<a href="" target="_blank" ng-attr-href="{{popover.link}}">Open</a>',
-      '<a href="" target="_blank" ng-click="unlink(popover)" ng-show="isLink(popover)"><i class="fa fa-unlink"></i></a>',
+        '<input type="text" ng-model="popover.link" />',
+        '<a href="" target="_blank" ng-attr-href="{{popover.link}}">Open</a>',
+        '<a href="" target="_blank" ng-click="unlink(popover)" ng-show="isLink(popover)"><i class="fa fa-unlink"></i></a>',
       '</div>'
     ];
 

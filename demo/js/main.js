@@ -38,7 +38,6 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
 
   $scope.imageSaved = function(url, image) {
     image.attr('src', url);
-    console.log('image saved');
   };
 
   $scope.aviaryOptions = ['crop', 'resize', 'orientation', 'text'];

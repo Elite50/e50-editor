@@ -29,7 +29,7 @@ angular.module('E50Editor')
 
         function imageHover(e) {
           var target = angular.element(e.target);
-          var id = parseInt(target.attr('image-id'), 10);
+          var id = parseInt(target.attr('cs-placeholder'), 10);
 
           angular.forEach(scope.imagePopovers, function(img, i) {
             img.show = (id == i);
@@ -139,11 +139,11 @@ angular.module('E50Editor')
         };
 
         function getImages() {
-          var placeholders = elm.parent().find('.placeholder');
+          var placeholders = elm.parent().find('[cs-placeholder]');
           angular.forEach(placeholders, function(image, i) {
             images[i] = image;
             var imgElm = angular.element(image);
-            imgElm.attr('image-id', i);
+            imgElm.attr('cs-placeholder', i);
             var src = imgElm.attr('src');
             var isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
             scope.imagePopovers[i] = {

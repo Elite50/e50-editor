@@ -130,7 +130,7 @@ angular.module('E50Editor')
 
         function imageHover(e) {
           var target = angular.element(e.target);
-          var id = parseInt(target.attr('image-id'), 10);
+          var id = parseInt(target.attr('cs-placeholder'), 10);
 
           angular.forEach(scope.imagePopovers, function(img, i) {
             img.show = (id == i);
@@ -240,11 +240,11 @@ angular.module('E50Editor')
         };
 
         function getImages() {
-          var placeholders = elm.parent().find('.placeholder');
+          var placeholders = elm.parent().find('[cs-placeholder]');
           angular.forEach(placeholders, function(image, i) {
             images[i] = image;
             var imgElm = angular.element(image);
-            imgElm.attr('image-id', i);
+            imgElm.attr('cs-placeholder', i);
             var src = imgElm.attr('src');
             var isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
             scope.imagePopovers[i] = {
@@ -337,9 +337,9 @@ angular.module('E50Editor')
 
     var template = [
       '<div class="link-manager" ng-repeat="popover in popovers" ng-show="popover.show">',
-      '<input type="text" ng-model="popover.link" />',
-      '<a href="" target="_blank" ng-attr-href="{{popover.link}}">Open</a>',
-      '<a href="" target="_blank" ng-click="unlink(popover)" ng-show="isLink(popover)"><i class="fa fa-unlink"></i></a>',
+        '<input type="text" ng-model="popover.link" />',
+        '<a href="" target="_blank" ng-attr-href="{{popover.link}}">Open</a>',
+        '<a href="" target="_blank" ng-click="unlink(popover)" ng-show="isLink(popover)"><i class="fa fa-unlink"></i></a>',
       '</div>'
     ];
 
@@ -836,7 +836,7 @@ angular.module('E50Editor')
     return {
       fontAwesome: '../bower_components/font-awesome/css/font-awesome.css',
       placeholder: 'images/placeholder.png',
-      aviaryKey: null,
+      aviaryKey: aviaryKey || '',
       attrs: {
         editable: 'cs-editable',
         format: 'cs-format',
