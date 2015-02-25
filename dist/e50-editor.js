@@ -3,7 +3,7 @@ angular.module('E50Editor')
   .directive('e50Button', ["$timeout", "E50EditorConfig", function($timeout, E50EditorConfig) {
 
     var template = [
-      '<div class="link-manager" ng-repeat="btn in buttons" ng-show="btn.show && !toggle">',
+      '<div class="link-manager" ng-repeat="btn in csButtons" ng-show="btn.show && !toggle">',
       '<form ng-submit="setBtnLink(btn)"><input type="text" ng-model="btn.link" /></form>',
       '<a href="" target="_blank" ng-attr-href="{{btn.link}}">Open</a>',
       '</div>'
@@ -18,7 +18,7 @@ angular.module('E50Editor')
           position:'absolute'
         });
 
-        scope.buttons = {};
+        scope.csButtons = {};
         var btnElms = {};
         function getButtons() {
           var btns = elm.parent().find('[e50-template]').find('['+E50EditorConfig.attrs.button+']');
@@ -26,7 +26,7 @@ angular.module('E50Editor')
             btn = angular.element(btn);
             btnElms[i] = btn;
             btn.attr(E50EditorConfig.attrs.button, i);
-            scope.buttons[i] = {
+            scope.csButtons[i] = {
               id: i,
               show: false,
               link: btn.attr('href') || 'http://'
@@ -45,7 +45,7 @@ angular.module('E50Editor')
           }
           var id = parseInt(target.attr(E50EditorConfig.attrs.button),10);
 
-          angular.forEach(scope.buttons, function(btn) {
+          angular.forEach(scope.csButtons, function(btn) {
             btn.show = btn.id === id;
           });
 
@@ -87,7 +87,7 @@ angular.module('E50Editor')
         elm.parent().bind('mousedown', function(e) {
           var btnManager = angular.element(e.target).closest('.link-manager');
           if(!btnManager.length) {
-            angular.forEach(scope.buttons, function(btn) {
+            angular.forEach(scope.csButtons, function(btn) {
               btn.show = false;
             });
           }
@@ -574,35 +574,23 @@ angular.module('E50Editor')
         ngModel.$setViewValue(elm.html());
       }
 
-      // Track the number of editable areas
-      var numOfEditables = elm.find('['+E50EditorConfig.attrs.editable+']').length;
-
-      // Setup the buttons for each editable area
+      var numOfEditables = 0;
       function setupEditableAreas() {
-
-        // Recheck editable areas
-        var newEditables = elm.find('['+E50EditorConfig.attrs.editable+']');
-
-        // Don't re-add editable areas
-        if(newEditables.length === numOfEditables) { return false; }
-
-        // Set the new number of editable areas
-        numOfEditables = newEditables.length;
-
-        // Re-initialize buttons
+        var editables = elm.find('['+E50EditorConfig.attrs.editable+']');
+        if(numOfEditables === editables.length) { return; }
+        numOfEditables = editables.length;
         scope.buttons = {};
-
-        // Add editable areas, and format buttons
-        angular.forEach(newEditables, function (editable) {
-          var e = angular.element(editable);
-          e.attr('contenteditable', true);
-          scope.buttons[e.attr(E50EditorConfig.attrs.editable)] = {
-            focused: false,
-            buttons: e.attr(E50EditorConfig.attrs.format) ? e.attr(E50EditorConfig.attrs.format).split(',') : []
+        angular.forEach(editables, function (editable, i) {
+          editable = angular.element(editable);
+          editable.attr('contenteditable', true);
+          editable.attr(E50EditorConfig.attrs.editable, i);
+          var focused = scope.buttons[i] ? scope.buttons[i].focused : false;
+          scope.buttons[i] = {
+            id: i,
+            focused: focused,
+            buttons: editable.attr(E50EditorConfig.attrs.format) ? editable.attr(E50EditorConfig.attrs.format).split(',') : []
           };
         });
-
-        // Update the view value
         ngModel.$setViewValue(elm.html());
       }
 
@@ -613,26 +601,25 @@ angular.module('E50Editor')
 
       // On mousedown, toggle focused property for each editable area
       function mouseDownHandler(e) {
-        var target = $(e.target);
+        var target = angular.element(e.target);
         var editable = target.closest('['+E50EditorConfig.attrs.editable+']');
         var button   = target.closest('.format-button');
 
         // Blur all editable areas, if we didn't click on anything associated with editing
         if(!editable.length && !button.length) {
-          Object.keys(scope.buttons).forEach(function(editableId) {
-            scope.buttons[editableId].focused = false;
+          angular.forEach(scope.buttons, function(btn) {
+            btn.focused = false;
           });
-          scope.showPopover = false;
           return;
         }
 
         // Get the editable area's id
-        var id = editable.attr(E50EditorConfig.attrs.editable);
+        var id = parseInt(editable.attr(E50EditorConfig.attrs.editable),10);
 
         // Toggle focused property
         if(scope.buttons[id]) {
-          Object.keys(scope.buttons).forEach(function(editableId) {
-            scope.buttons[editableId].focused = (id === editableId);
+          angular.forEach(scope.buttons, function(btn) {
+            btn.focused = btn.id === id;
           });
         }
 
@@ -689,9 +676,11 @@ angular.module('E50Editor')
         return elm[0].outerHTML;
       });
 
-      // On every keyup, sync the view with the model (scope.html)
+      // On every keyup, sync the view with the model (scope.html) only if we are in view mode
       elm.bind('keyup', function(e) {
-        ngModel.$setViewValue(elm.html());
+        if(!scope.toggle) {
+          ngModel.$setViewValue(elm.html());
+        }
         scope.$apply();
       });
 
@@ -781,6 +770,22 @@ angular.module('E50Editor')
 }]);
 angular.module('E50Editor')
   .factory('E50BrowswerTag', function() {
+    var _browserDetect = {
+      ie: (function(){
+        var undef,
+          v = 3,
+          div = document.createElement('div'),
+          all = div.getElementsByTagName('i');
+
+        while (
+          div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+            all[0]
+          );
+
+        return v > 4 ? v : undef;
+      }()),
+      webkit: /AppleWebKit\/([\d.]+)/i.test(navigator.userAgent)
+    };
     return function(tag){
       if(!tag) return (_browserDetect.ie <= 8)? 'P' : 'p';
       else if(tag === '') return (_browserDetect.ie === undefined)? 'div' : (_browserDetect.ie <= 8)? 'P' : 'p';

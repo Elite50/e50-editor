@@ -2,7 +2,7 @@ angular.module('E50Editor')
   .directive('e50Button', function($timeout, E50EditorConfig) {
 
     var template = [
-      '<div class="link-manager" ng-repeat="btn in buttons" ng-show="btn.show && !toggle">',
+      '<div class="link-manager" ng-repeat="btn in csButtons" ng-show="btn.show && !toggle">',
       '<form ng-submit="setBtnLink(btn)"><input type="text" ng-model="btn.link" /></form>',
       '<a href="" target="_blank" ng-attr-href="{{btn.link}}">Open</a>',
       '</div>'
@@ -17,7 +17,7 @@ angular.module('E50Editor')
           position:'absolute'
         });
 
-        scope.buttons = {};
+        scope.csButtons = {};
         var btnElms = {};
         function getButtons() {
           var btns = elm.parent().find('[e50-template]').find('['+E50EditorConfig.attrs.button+']');
@@ -25,7 +25,7 @@ angular.module('E50Editor')
             btn = angular.element(btn);
             btnElms[i] = btn;
             btn.attr(E50EditorConfig.attrs.button, i);
-            scope.buttons[i] = {
+            scope.csButtons[i] = {
               id: i,
               show: false,
               link: btn.attr('href') || 'http://'
@@ -44,7 +44,7 @@ angular.module('E50Editor')
           }
           var id = parseInt(target.attr(E50EditorConfig.attrs.button),10);
 
-          angular.forEach(scope.buttons, function(btn) {
+          angular.forEach(scope.csButtons, function(btn) {
             btn.show = btn.id === id;
           });
 
@@ -86,7 +86,7 @@ angular.module('E50Editor')
         elm.parent().bind('mousedown', function(e) {
           var btnManager = angular.element(e.target).closest('.link-manager');
           if(!btnManager.length) {
-            angular.forEach(scope.buttons, function(btn) {
+            angular.forEach(scope.csButtons, function(btn) {
               btn.show = false;
             });
           }
