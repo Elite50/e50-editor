@@ -16,6 +16,10 @@
   border-bottom: 1px solid lightgray;
   padding-right: 5px; }
 
+.link-manager form {
+  margin: 0;
+  display: inline-block; }
+
 .link-manager input[type="text"] {
   border: 0;
   padding: 5px;

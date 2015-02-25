@@ -1,10 +1,113 @@
 angular.module('E50Editor', ['ngSanitize']);
 angular.module('E50Editor')
+  .directive('e50Button', ["$timeout", "E50EditorConfig", function($timeout, E50EditorConfig) {
+
+    var template = [
+      '<div class="link-manager" ng-repeat="btn in buttons" ng-show="btn.show && !toggle">',
+      '<form ng-submit="setBtnLink(btn)"><input type="text" ng-model="btn.link" /></form>',
+      '<a href="" target="_blank" ng-attr-href="{{btn.link}}">Open</a>',
+      '</div>'
+    ];
+
+    return {
+      template: template.join(''),
+      link: function(scope, elm) {
+
+        elm.css({
+          opacity: 0,
+          position:'absolute'
+        });
+
+        scope.buttons = {};
+        var btnElms = {};
+        function getButtons() {
+          var btns = elm.parent().find('[e50-template]').find('['+E50EditorConfig.attrs.button+']');
+          angular.forEach(btns, function(btn, i) {
+            btn = angular.element(btn);
+            btnElms[i] = btn;
+            btn.attr(E50EditorConfig.attrs.button, i);
+            scope.buttons[i] = {
+              id: i,
+              show: false,
+              link: btn.attr('href') || 'http://'
+            };
+          });
+          btns.unbind('mouseup', clickBtnHandler);
+          btns.bind('mouseup', clickBtnHandler);
+        }
+
+        function clickBtnHandler(e) {
+          var target = angular.element(e.target);
+          var isBtn = target.attr(E50EditorConfig.attrs.button) !== undefined;
+          if(!isBtn) {
+            target = target.closest('['+E50EditorConfig.attrs.button+']');
+          }
+          var id = parseInt(target.attr(E50EditorConfig.attrs.button),10);
+
+          angular.forEach(scope.buttons, function(btn) {
+            btn.show = btn.id === id;
+          });
+
+          elm.css({
+            opacity: 0,
+            position: 'absolute',
+            minWidth: '194px',
+            minHeight: '24px'
+          });
+
+          $timeout(function() {
+
+            var offset = target.offset();
+            offset.top = Math.ceil(offset.top) - elm.height() - 10;
+
+            var extraWidth = 0;
+            extraWidth += parseInt(target.css('padding-right'));
+            extraWidth += parseInt(target.css('margin-right'));
+
+            offset.left = Math.ceil(offset.left) + target.width() - elm.width() + extraWidth;
+            elm.css(offset);
+
+            elm.animate({
+              top: offset.top + 5,
+              opacity: 1
+            }, 200);
+          });
+
+          scope.$apply();
+        }
+
+        getButtons();
+
+        scope.$watch('html', function() {
+          getButtons();
+        });
+
+        // Close btn managers if we clicked away
+        elm.parent().bind('mousedown', function(e) {
+          var btnManager = angular.element(e.target).closest('.link-manager');
+          if(!btnManager.length) {
+            angular.forEach(scope.buttons, function(btn) {
+              btn.show = false;
+            });
+          }
+        });
+
+        // Set the href
+        scope.setBtnLink = function(link) {
+          btnElms[link.id].attr('href', link.link);
+          scope.$emit('updateViewValue');
+        };
+
+      }
+    };
+  }]);
+angular.module('E50Editor')
 .directive('e50Editor', function() {
 
   var template = [
-    '<div e50-popover class="e50-popover"></div>',
     '<div e50-image class="e50-image"></div>',
+    '<div e50-link class="e50-link"></div>',
+    '<div e50-button class="e50-buttons"></div>',
     '<div e50-toolbars buttons="buttons" iframe-id="iframeId" override="override"></div>',
     '<div class="template" e50-template ng-model="html" ng-show="!toggle"></div>',
     '<ng-include src="footerTpl" ng-hide="toggle"></ng-include>',
@@ -42,6 +145,8 @@ angular.module('E50Editor')
       link: function(scope, elm) {
 
         scope.template = scope.template || 'iframe-template.tpl.html';
+
+        scope.toggle = scope.toggle || false
 
         // Allow the ability to pass in a template url
         var iframe = angular.element(document.createElement('iframe'));
@@ -333,77 +438,124 @@ angular.module('E50Editor')
     };
   }]);
 angular.module('E50Editor')
-  .directive('e50Popover', ["$timeout", "E50Documents", "E50EditorConfig", function($timeout, E50Documents, E50EditorConfig) {
+  .directive('e50Link', ["$timeout", "E50EditorConfig", "E50Documents", function($timeout, E50EditorConfig, E50Documents) {
 
     var template = [
-      '<div class="link-manager" ng-repeat="popover in popovers" ng-show="popover.show">',
-        '<input type="text" ng-model="popover.link" />',
-        '<a href="" target="_blank" ng-attr-href="{{popover.link}}">Open</a>',
-        '<a href="" target="_blank" ng-click="unlink(popover)" ng-show="isLink(popover)"><i class="fa fa-unlink"></i></a>',
+      '<div class="link-manager" ng-repeat="link in links" ng-show="link.show && !toggle">',
+        '<form ng-submit="setLink(link)"><input type="text" ng-model="link.link" /></form>',
+        '<a href="" target="_blank" ng-attr-href="{{link.link}}">Open</a>',
+        '<a href="" target="_blank" ng-click="unlink(link)"><i class="fa fa-unlink"></i></a>',
       '</div>'
     ];
 
     return {
       template: template.join(''),
       link: function(scope, elm) {
-        var linkElement;
+
         var iframe = E50Documents.get(scope.iframeId);
-        scope.unlink = function(popover) {
-          var isLink = linkElement[0].tagName.toLowerCase() === 'a';
+
+        elm.css({
+          opacity: 0,
+          position:'absolute'
+        });
+
+        scope.links = {};
+        var linkElms = {};
+        function getLinks() {
+          var links = elm.parent().find('[e50-template]').find('a');
+          angular.forEach(links, function(link, i) {
+            link = angular.element(link);
+            if(link.attr(E50EditorConfig.attrs.editable)) { return false; }
+            linkElms[i] = link;
+            link.attr(E50EditorConfig.attrs.link, i);
+            scope.links[i] = {
+              id: i,
+              show: false,
+              link: link.attr('href') || 'http://'
+            };
+            link.unbind('mouseup', clickLinkHandler);
+            link.bind('mouseup', clickLinkHandler);
+          });
+        }
+
+        function clickLinkHandler(e) {
+          var target = angular.element(e.target);
+          var isLink = e.target.tagName.toLowerCase() === 'a';
           if(!isLink) {
-            linkElement = linkElement.closest('a');
+            target = target.closest('a');
           }
-          $timeout(function() {
-            var range = rangy.createRange();
-            range.selectNodeContents(linkElement[0]);
-            var sel = rangy.getIframeSelection(iframe[0]);
-            sel.setSingleRange(range);
-            linkElement = null;
-            popover.show = false;
-            var doc = iframe[0].document || iframe[0].contentWindow.document;
-            doc.execCommand('unlink');
+          var id = parseInt(target.attr(E50EditorConfig.attrs.link),10);
+
+          angular.forEach(scope.links, function(link) {
+            link.show = link.id === id;
           });
-        };
-        scope.isButton = function(popover) {
-          return popover.id.indexOf('button') !== -1;
-        };
-        scope.isLink = function(popover) {
-          return popover.id.indexOf('link') !== -1;
-        };
-        scope.$on('e50Popover', function(ev, popoverElm) {
-          linkElement = popoverElm;
-          var id = popoverElm.attr(E50EditorConfig.attrs.popover);
-          angular.forEach(scope.popovers, function(popover, key) {
-            popover.show = (key === id) && id !== 'false';
-          });
+
           elm.css({
-            opacity: 0
+            opacity: 0,
+            position:'absolute'
           });
 
           $timeout(function() {
 
-            var offset = popoverElm.offset();
-            offset.top = offset.top - elm.height() - 10;
-
-            var popover = scope.popovers[popoverElm.attr(E50EditorConfig.attrs.popover)];
+            var offset = target.offset();
+            offset.top = Math.ceil(offset.top) - elm.height() - 10;
 
             var extraWidth = 0;
-            extraWidth += parseInt(popoverElm.css('padding-right'));
-            extraWidth += parseInt(popoverElm.css('margin-right'));
+            extraWidth += parseInt(target.css('padding-right'));
+            extraWidth += parseInt(target.css('margin-right'));
 
-            offset.left = Math.ceil(offset.left) + popoverElm.width() - elm.width() + extraWidth;
+            offset.left = Math.ceil(offset.left) + target.width() - elm.width() + extraWidth;
             elm.css(offset);
 
             elm.animate({
               top: offset.top + 5,
               opacity: 1
             }, 200);
-
           });
+        }
+
+        getLinks();
+
+        scope.$watch('html', function() {
+          getLinks();
+        });
+
+        // Close link managers if we clicked away
+        elm.parent().bind('mousedown', function(e) {
+          var linkManager = angular.element(e.target).closest('.link-manager');
+          if(!linkManager.length) {
+            angular.forEach(scope.links, function(link) {
+              link.show = false;
+              linkElms[link.id].attr('href', link.link);
+            });
+          }
+        });
+
+        // Set the href
+        scope.setLink = function(link) {
+          linkElms[link.id].attr('href', link.link);
+          scope.$emit('updateViewValue');
+        };
+
+        // Unlink a link
+        scope.unlink = function(link) {
+          var linkElement = linkElms[link.id];
+          $timeout(function() {
+            var range = rangy.createRange();
+            range.selectNodeContents(linkElement[0]);
+            var sel = rangy.getIframeSelection(iframe[0]);
+            sel.setSingleRange(range);
+            link.show = false;
+            var doc = iframe[0].document || iframe[0].contentWindow.document;
+            doc.execCommand('unlink');
+          });
+        };
+
+        scope.$on('linkCreated', function() {
+          getLinks();
         });
       }
     };
-
   }]);
 angular.module('E50Editor')
 .directive('e50Template', ["E50Documents", "E50EditorConfig", function(E50Documents, E50EditorConfig) {
@@ -419,13 +571,13 @@ angular.module('E50Editor')
       }
 
       // Track the number of editable areas
-      var numOfEditables = $(elm).find('['+E50EditorConfig.attrs.editable+']').length;
+      var numOfEditables = elm.find('['+E50EditorConfig.attrs.editable+']').length;
 
       // Setup the buttons for each editable area
-      function getButtons() {
+      function setupEditableAreas() {
 
         // Recheck editable areas
-        var newEditables = $(elm).find('['+E50EditorConfig.attrs.editable+']');
+        var newEditables = elm.find('['+E50EditorConfig.attrs.editable+']');
 
         // Don't re-add editable areas
         if(newEditables.length === numOfEditables) { return false; }
@@ -452,7 +604,7 @@ angular.module('E50Editor')
 
       scope.$watch('html', function(newV, oldV) {
         if(!newV && newV === oldV) { return false; }
-        getButtons();
+        setupEditableAreas();
       });
 
       // On mousedown, toggle focused property for each editable area
@@ -531,103 +683,6 @@ angular.module('E50Editor')
         scope.$apply();
       });
 
-      scope.popovers = {};
-
-      // Popover handler
-      function popoverHandler(e) {
-        var target = angular.element(e.target);
-        var popover  = target.closest('.e50-popover');
-        if(!target.attr(E50EditorConfig.attrs.popover)) {
-          target = target.closest('['+E50EditorConfig.attrs.popover+']');
-        }
-        if(!popover.length && !target.length) {
-          scope.showPopover = false;
-          angular.forEach(scope.popovers, function(popover) {
-            popover.show = false;
-          });
-          return;
-        }
-        scope.showPopover = true;
-        scope.$emit('e50Popover', target);
-        scope.$apply();
-      }
-
-      elm.bind('mousedown', popoverHandler);
-
-      if(isIframe) {
-        parentDoc.bind('mousedown', popoverHandler);
-      }
-
-      var popoverLength = false;
-      var popoverElms = {};
-      function getPopovers() {
-        var html = angular.element(elm);
-        var popovers = html.find('['+E50EditorConfig.attrs.popover+']');
-        if(popovers.length === popoverLength) { return false; }
-        popoverLength = popovers.length;
-        popoverElms = {};
-        scope.popovers = {};
-        angular.forEach(popovers, function(popover, i) {
-          var popoverElm = angular.element(popover);
-          var id = popoverElm.attr(E50EditorConfig.attrs.popover);
-          if(id === 'false') { return; }
-          while (popoverElms[id]) {
-            id += i;
-          }
-          popoverElm.attr(E50EditorConfig.attrs.popover, id);
-          popoverElms[id] = popoverElm;
-          scope.popovers[id] = {
-            id: id,
-            link: popoverElm.attr('href') || 'http://',
-            show: false
-          };
-        });
-      }
-
-      scope.$watch('html', function(newV, oldV) {
-        if(!newV && newV === oldV){ return; }
-        getPopovers();
-      });
-
-      scope.$watch('popovers', function() {
-        angular.forEach(scope.popovers, function(popover, id) {
-          if(popoverElms[id]) {
-            popoverElms[id].attr('href', popover.link);
-          }
-        });
-        ngModel.$setViewValue(elm.html());
-      }, true);
-
-
-      // Unbind our drop events when the scope is destroyed
-      scope.$on('$destroy', function() {
-        parentDoc.unbind('mousedown', popoverHandler);
-      });
-
-      function linkHandler(e) {
-        var target = angular.element(e.target);
-        var isLink = e.target.tagName.toLowerCase() === 'a';
-        if(!isLink) {
-          target = target.closest('a');
-        }
-        if(isLink) {
-          var id = target.attr(E50EditorConfig.attrs.popover);
-          if(id === 'false') { return; }
-          if(!id) {
-            id = "link:1";
-            while(popoverElms[id]) {
-              id += 1;
-            }
-            target.attr(E50EditorConfig.attrs.popover, id);
-            popoverElms[id] = target;
-            ngModel.$setViewValue(elm.html());
-            scope.$apply();
-          }
-        }
-      }
-
-      elm.bind('mousedown', linkHandler);
-
       // Watch events to add text
       scope.$on("e50AddText", function(event, id, text) {
         if(id !== scope.iframeId) { return false; }
@@ -642,11 +697,10 @@ angular.module('E50Editor')
         ngModel.$setViewValue(elm.html());
       });
 
+      // Watch for updateViewValue events coming from other directives
       scope.$on('updateViewValue', function() {
         ngModel.$setViewValue(elm.html());
       });
-
-      scope.$on('updateViewValue');
     }
   };
 }]);
@@ -737,7 +791,7 @@ angular.module('E50Editor')
     };
   });
 angular.module('E50Editor')
-.factory('E50EditorButtons', ["E50BrowswerTag", "E50Documents", "E50EditorConfig", function(E50BrowswerTag, E50Documents, E50EditorConfig) {
+.factory('E50EditorButtons', ["E50BrowswerTag", "E50Documents", "E50EditorConfig", "$rootScope", function(E50BrowswerTag, E50Documents, E50EditorConfig, $rootScope) {
 
   /**
    * Each command must implement the given interface 
@@ -796,6 +850,7 @@ angular.module('E50Editor')
       var url = window.prompt('Link URL:', 'http://');
       var doc = this.iframe[0].document || this.iframe[0].contentWindow.document || document;
       doc.execCommand('createLink', false, url);
+      $rootScope.$broadcast('linkCreated');
     };
     this.isActive = function() {
       return false;
@@ -841,7 +896,9 @@ angular.module('E50Editor')
         editable: 'cs-editable',
         format: 'cs-format',
         popover: 'cs-popover',
-        placeholder: 'cs-placeholder'
+        placeholder: 'cs-placeholder',
+        link: 'cs-link',
+        button: 'cs-button'
       }
     };
   });

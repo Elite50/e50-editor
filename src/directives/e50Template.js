@@ -12,13 +12,13 @@ angular.module('E50Editor')
       }
 
       // Track the number of editable areas
-      var numOfEditables = $(elm).find('['+E50EditorConfig.attrs.editable+']').length;
+      var numOfEditables = elm.find('['+E50EditorConfig.attrs.editable+']').length;
 
       // Setup the buttons for each editable area
-      function getButtons() {
+      function setupEditableAreas() {
 
         // Recheck editable areas
-        var newEditables = $(elm).find('['+E50EditorConfig.attrs.editable+']');
+        var newEditables = elm.find('['+E50EditorConfig.attrs.editable+']');
 
         // Don't re-add editable areas
         if(newEditables.length === numOfEditables) { return false; }
@@ -45,7 +45,7 @@ angular.module('E50Editor')
 
       scope.$watch('html', function(newV, oldV) {
         if(!newV && newV === oldV) { return false; }
-        getButtons();
+        setupEditableAreas();
       });
 
       // On mousedown, toggle focused property for each editable area
@@ -124,103 +124,6 @@ angular.module('E50Editor')
         scope.$apply();
       });
 
-      scope.popovers = {};
-
-      // Popover handler
-      function popoverHandler(e) {
-        var target = angular.element(e.target);
-        var popover  = target.closest('.e50-popover');
-        if(!target.attr(E50EditorConfig.attrs.popover)) {
-          target = target.closest('['+E50EditorConfig.attrs.popover+']');
-        }
-        if(!popover.length && !target.length) {
-          scope.showPopover = false;
-          angular.forEach(scope.popovers, function(popover) {
-            popover.show = false;
-          });
-          return;
-        }
-        scope.showPopover = true;
-        scope.$emit('e50Popover', target);
-        scope.$apply();
-      }
-
-      elm.bind('mousedown', popoverHandler);
-
-      if(isIframe) {
-        parentDoc.bind('mousedown', popoverHandler);
-      }
-
-      var popoverLength = false;
-      var popoverElms = {};
-      function getPopovers() {
-        var html = angular.element(elm);
-        var popovers = html.find('['+E50EditorConfig.attrs.popover+']');
-        if(popovers.length === popoverLength) { return false; }
-        popoverLength = popovers.length;
-        popoverElms = {};
-        scope.popovers = {};
-        angular.forEach(popovers, function(popover, i) {
-          var popoverElm = angular.element(popover);
-          var id = popoverElm.attr(E50EditorConfig.attrs.popover);
-          if(id === 'false') { return; }
-          while (popoverElms[id]) {
-            id += i;
-          }
-          popoverElm.attr(E50EditorConfig.attrs.popover, id);
-          popoverElms[id] = popoverElm;
-          scope.popovers[id] = {
-            id: id,
-            link: popoverElm.attr('href') || 'http://',
-            show: false
-          };
-        });
-      }
-
-      scope.$watch('html', function(newV, oldV) {
-        if(!newV && newV === oldV){ return; }
-        getPopovers();
-      });
-
-      scope.$watch('popovers', function() {
-        angular.forEach(scope.popovers, function(popover, id) {
-          if(popoverElms[id]) {
-            popoverElms[id].attr('href', popover.link);
-          }
-        });
-        ngModel.$setViewValue(elm.html());
-      }, true);
-
-
-      // Unbind our drop events when the scope is destroyed
-      scope.$on('$destroy', function() {
-        parentDoc.unbind('mousedown', popoverHandler);
-      });
-
-      function linkHandler(e) {
-        var target = angular.element(e.target);
-        var isLink = e.target.tagName.toLowerCase() === 'a';
-        if(!isLink) {
-          target = target.closest('a');
-        }
-        if(isLink) {
-          var id = target.attr(E50EditorConfig.attrs.popover);
-          if(id === 'false') { return; }
-          if(!id) {
-            id = "link:1";
-            while(popoverElms[id]) {
-              id += 1;
-            }
-            target.attr(E50EditorConfig.attrs.popover, id);
-            popoverElms[id] = target;
-            ngModel.$setViewValue(elm.html());
-            scope.$apply();
-          }
-        }
-      }
-
-      elm.bind('mousedown', linkHandler);
-
       // Watch events to add text
       scope.$on("e50AddText", function(event, id, text) {
         if(id !== scope.iframeId) { return false; }
@@ -235,11 +138,10 @@ angular.module('E50Editor')
         ngModel.$setViewValue(elm.html());
       });
 
+      // Watch for updateViewValue events coming from other directives
       scope.$on('updateViewValue', function() {
         ngModel.$setViewValue(elm.html());
       });
-
-      scope.$on('updateViewValue');
     }
   };
 });

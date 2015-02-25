@@ -15,6 +15,8 @@ angular.module('E50Editor')
 
         scope.template = scope.template || 'iframe-template.tpl.html';
 
+        scope.toggle = scope.toggle || false
+
         // Allow the ability to pass in a template url
         var iframe = angular.element(document.createElement('iframe'));
 

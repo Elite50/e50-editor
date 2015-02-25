@@ -8,7 +8,9 @@ angular.module('E50Editor')
         editable: 'cs-editable',
         format: 'cs-format',
         popover: 'cs-popover',
-        placeholder: 'cs-placeholder'
+        placeholder: 'cs-placeholder',
+        link: 'cs-link',
+        button: 'cs-button'
       }
     };
   });

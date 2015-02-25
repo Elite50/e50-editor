@@ -42,13 +42,13 @@
   <div ng-controller="MainCtrl">
 
     <div class="container btns clearfix">
-        <button type="button" ng-click="showHtml=!showHtml" class="toggle">Show {{showHtml ? 'live' : 'html'}}</button>
+        <button type="button" ng-click="toggle.showHtml=!toggle.showHtml" class="toggle">Show {{toggle.showHtml ? 'live' : 'html'}}</button>
         <div e50-toolbars buttons="buttons" iframe-id="iframeId" ng-if="iframeLoaded"></div>
     </div>
 
     <div class="container">
       <!--<div e50-editor ng-model="tplHtml" toggle="showHtml"></div>-->
-      <div e50-iframe="{{iframeId}}" ng-model="tplHtml" toggle="showHtml" override="true" buttons="buttons" image-saved="imageSaved" aviary-options="aviaryOptions" footer-tpl="footerTpl"></div>
+      <div e50-iframe="{{iframeId}}" ng-model="tplHtml" toggle="toggle.showHtml" override="true" buttons="buttons" image-saved="imageSaved" aviary-options="aviaryOptions" footer-tpl="footerTpl"></div>
     </div>
 
   </div>

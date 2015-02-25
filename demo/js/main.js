@@ -3,6 +3,9 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
 
   $scope.iframeId = "iframe1";
   $scope.buttons = {};
+  $scope.toggle = {
+    showHtml: false
+  };
 
   // Fetch template
   $http.get('templates/template.tpl.html').success(function(tpl) {

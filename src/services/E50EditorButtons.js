@@ -1,5 +1,5 @@
 angular.module('E50Editor')
-.factory('E50EditorButtons', function(E50BrowswerTag, E50Documents, E50EditorConfig) {
+.factory('E50EditorButtons', function(E50BrowswerTag, E50Documents, E50EditorConfig, $rootScope) {
 
   /**
    * Each command must implement the given interface 
@@ -58,6 +58,7 @@ angular.module('E50Editor')
       var url = window.prompt('Link URL:', 'http://');
       var doc = this.iframe[0].document || this.iframe[0].contentWindow.document || document;
       doc.execCommand('createLink', false, url);
+      $rootScope.$broadcast('linkCreated');
     };
     this.isActive = function() {
       return false;
