@@ -1,4 +1,7 @@
 var app = angular.module('app', ['E50Editor', 'ngSanitize', 'ngAnimate']);
+app.run(function(E50EditorConfig) {
+  E50EditorConfig.aviaryKey = aviaryKey
+});
 app.controller('MainCtrl', function($scope, $http, $interval) {
 
   $scope.iframeId = "iframe1";
