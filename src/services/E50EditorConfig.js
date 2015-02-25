@@ -7,7 +7,8 @@ angular.module('E50Editor')
       attrs: {
         editable: 'cs-editable',
         format: 'cs-format',
-        popover: 'cs-popover'
+        popover: 'cs-popover',
+        placeholder: 'cs-placeholder'
       }
     };
   });

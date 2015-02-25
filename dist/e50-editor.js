@@ -130,7 +130,7 @@ angular.module('E50Editor')
 
         function imageHover(e) {
           var target = angular.element(e.target);
-          var id = parseInt(target.attr('cs-placeholder'), 10);
+          var id = parseInt(target.attr(E50EditorConfig.attrs.placeholder), 10);
 
           angular.forEach(scope.imagePopovers, function(img, i) {
             img.show = (id == i);
@@ -240,11 +240,11 @@ angular.module('E50Editor')
         };
 
         function getImages() {
-          var placeholders = elm.parent().find('[cs-placeholder]');
+          var placeholders = elm.parent().find('['+E50EditorConfig.attrs.placeholder+']');
           angular.forEach(placeholders, function(image, i) {
             images[i] = image;
             var imgElm = angular.element(image);
-            imgElm.attr('cs-placeholder', i);
+            imgElm.attr(E50EditorConfig.attrs.placeholder, i);
             var src = imgElm.attr('src');
             var isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
             scope.imagePopovers[i] = {
@@ -840,7 +840,8 @@ angular.module('E50Editor')
       attrs: {
         editable: 'cs-editable',
         format: 'cs-format',
-        popover: 'cs-popover'
+        popover: 'cs-popover',
+        placeholder: 'cs-placeholder'
       }
     };
   });
