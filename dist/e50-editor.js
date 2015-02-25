@@ -352,7 +352,13 @@ angular.module('E50Editor')
             var imgElm = angular.element(image);
             imgElm.attr(E50EditorConfig.attrs.placeholder, i);
             var src = imgElm.attr('src');
-            var isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
+            var isPlaceholder = true;
+            if(!src) {
+              imgElm.attr('src', E50EditorConfig.placeholder);
+              isPlaceholder = true;
+            } else {
+              isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
+            }
             scope.imagePopovers[i] = {
               id: i,
               show: false,
