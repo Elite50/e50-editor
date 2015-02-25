@@ -34,6 +34,7 @@ angular.module('E50Editor')
           });
           btns.unbind('mouseup', clickBtnHandler);
           btns.bind('mouseup', clickBtnHandler);
+          scope.$emit('updateViewValue');
         }
 
         function clickBtnHandler(e) {
@@ -372,6 +373,8 @@ angular.module('E50Editor')
 
           placeholders.unbind('drop', dropHandler);
           placeholders.bind('drop', dropHandler);
+
+          scope.$emit('updateViewValue');
         }
 
         scope.$watch('html', function(newV, oldV) {
@@ -476,6 +479,7 @@ angular.module('E50Editor')
             link.unbind('mouseup', clickLinkHandler);
             link.bind('mouseup', clickLinkHandler);
           });
+          scope.$emit('updateViewValue');
         }
 
         function clickLinkHandler(e) {

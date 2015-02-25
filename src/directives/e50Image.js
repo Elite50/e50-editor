@@ -166,6 +166,8 @@ angular.module('E50Editor')
 
           placeholders.unbind('drop', dropHandler);
           placeholders.bind('drop', dropHandler);
+
+          scope.$emit('updateViewValue');
         }
 
         scope.$watch('html', function(newV, oldV) {

@@ -1,152 +1,259 @@
-<div class="wrap">
-  <style>
-    body {
-      background-color: #fafafa;
-      margin: 0;
-      padding: 20px 0 !important;
-      font-family: 'Helvetica Neue'; }
+<div><style type="text/css">
+  body {
+    margin: 0;
+    padding: 0;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    color: #666666;
+    background-color: #fafafa;
+  }
 
-    a {
-      text-decoration:none;
-      color: #00aeef;
+  a {
+    text-decoration: none;
+  }
+
+  div,
+  li {
+    font-size: 14px;
+    color: #666666;
+    line-height: 28px;
+    font-weight: 200;
+  }
+
+  table {
+    border-spacing: 0;
+    color: #666666;
+  }
+
+  table[class="table-wrap"] {
+    font-family:'Helvetica Neue';
+    background-color: #fafafa;
+    height: 100%;
+  }
+
+  table.container {
+    width:500px;
+    max-width:500px;
+    background-color:#ffffff;
+  }
+
+  table td {
+    border-collapse: collapse;
+  }
+
+  .logo-cell {
+    padding:20px;
+    border:1px solid #e4e4e4;
+  }
+
+  .content-cell {
+    padding-left:40px;
+    padding-right:40px;
+    padding-top:40px;
+    border-left:1px solid #e4e4e4;
+    border-right:1px solid #e4e4e4;
+  }
+
+  .content-title {
+    font-weight: 200;
+    padding-left: 0;
+    font-size: 21px;
+    margin: 0;
+  }
+
+  .placeholder {
+    width:100%;
+  }
+
+  .button-cell {
+    padding-left:40px;
+    padding-right:40px;
+    border-left: 1px solid #e4e4e4;
+    border-right:1px solid #e4e4e4;
+  }
+
+  .button {
+    text-decoration: none;
+    color: white;
+    background-color: #00aeef;
+    display: block; width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    font-weight: 200;
+    border-bottom: 4px solid #009bd5;
+    font-size: 14px;
+  }
+
+  .partner-cell {
+    padding:40px;
+    border: 1px solid #e4e4e4;
+    border-bottom: 0;
+    background-color: #fafafa;
+  }
+
+  .with {
+    font-size: 14px;
+    color: #666666;
+    line-height: 28px;
+    font-weight: 200;
+    margin-top: 0;
+    margin-bottom: 7px;
+    text-align: center;
+    font-style: italic;
+  }
+
+  .partners {
+    text-align:center;
+  }
+
+  .partners a {
+    text-decoration: none;
+    color: #666666;
+    font-size: 18px;
+    font-weight: 200;
+    margin-right: 14px;
+  }
+
+  .footer-cell {
+    border: 1px solid #e4e4e4;
+    border-top: 0;
+  }
+
+  .footer-cell a,
+  .footer-link {
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 200;
+    padding: 0 20px;
+    min-width: 125px;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 40px;
+  }
+
+  .organization {
+    font-size: 12px;
+    color: #666666;
+    line-height: 28px;
+    font-weight: 200;
+    margin-bottom: 0;
+  }
+
+  .ExternalClass {
+    width: 100%;
+  }
+
+  .ExternalClass,
+  .ExternalClass p,
+  .ExternalClass span,
+  .ExternalClass font,
+  .ExternalClass td,
+  .ExternalClass div {
+    line-height: 100%;
+  }
+
+  .ReadMsgBody {
+    width: 100%;
+    background-color: #ebebeb;
+  }
+
+  table {
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+  }
+
+  table.footer-table {
+    background-color: #fafafa;
+  }
+
+  table.footer-table table {
+    padding: 20px;
+    border: 1px solid #e4e4e4;
+  }
+
+  table.footer-table table td {
+    text-align:center;
+    padding: 10px;
+    font-family: 'Helvetica Neue';
+    font-size: 12px;
+    font-weight:200;
+  }
+
+  table.footer-table a {
+    text-decoration:none;
+  }
+
+  img {
+    -ms-interpolation-mode: bicubic;
+  }
+
+  .yshortcuts a {
+    border-bottom: none !important;
+  }
+
+  @media screen and (max-width: 500px) {
+    table[class="force-row"],
+    table[class="container"] {
+      width: 100% !important;
+      max-width: 100% !important;
     }
-
-    .container {
-      width: 500px;
-      background-color: white;
-      margin: 0 auto;
-      border: 1px solid #e4e4e4; }
-
-    .header {
-      border-bottom: 1px solid #e4e4e4; }
-
-    h1,h2,h3,h4,h5 {
-      font-weight: 200;
-      color: #666666;
-      padding-left: 40px; }
-
-    .content {
-      padding: 40px; }
-
-    .content img {
-      width: 100%;  }
-
-    .promo-text {
-      font-size: 21px;
-      color: #00aeef;
-      font-weight: 200;
-      padding-left: 0;
-      margin-top: 0; }
-
-    .placeholder {
-      width: 100%; }
-
-    p {
-      font-size: 14px;
-      color: #666666;
-      line-height: 28px;
-      font-weight: 200; }
-
-    li {
-      font-size: 14px;
-      color: #666666;
-      line-height: 28px;
-      font-weight: 200; }
-
-    .button {
-      color: white;
-      background-color: #00aeef;
-      display: block;
-      width: 100%;
-      text-align: center;
-      text-decoration: none;
-      padding: 10px 0;
-      font-weight: 200;
-      border-bottom: 4px solid #009bd5;
-      font-size: 14px; }
-
-    .partners-wrap {
-      background-color: #fafafa;
-      padding: 40px;
-      border-top: 1px solid #e4e4e4; }
-    .partners-wrap .with {
-      margin-top: 0;
-      margin-bottom: 7px;
-      text-align: center;
-      font-style: italic; }
-
-    .partners {
-      text-align: center; }
-    .partners a {
-      font-size: 18px;
-      color: #666666;
-      text-decoration: none;
-      font-weight: 200;
-      margin-right: 14px; }
-    .container.footer-wrap {
-      border-top:0;
+  }
+  @media screen and (max-width: 400px) {
+    td[class="container-padding"] {
+      padding-left: 12px !important;
+      padding-right: 12px !important;
     }
-    .footer {
-      text-align: center;
-      padding: 40px; }
-    .footer a {
-      color: #00aeef;
-      font-size: 12px;
-      text-decoration: none;
-      font-weight: 200;
-      border-right: 1px solid #e4e4e4;
-      padding: 0 20px;
-      min-width: 125px; }
-    .footer a:last-child {
-      border: 0; }
-    .footer p {
-      margin-bottom: 0;
-      font-size: 12px;
-      font-weight: 200; }
-  </style>
-  <div class="container">
-
-    <div class="header" cs-editable="logo">
-      <h2>
-        Your Logo
-      </h2>
-    </div>
-
-    <div>
-
-      <div  class="content" cs-editable="main" cs-format="bold,italic,underline,justifyLeft,justifyRight,justifyCenter,placeholder,link">
-        <h2 class="promo-text">
-          Trending in Sports
-        </h2>
-
-        <img src="images/placeholder.png" alt="" class="placeholder" cs-placeholder />
-
-        <p>Vis at admodum epicurei honestatis. Eam ea noluisse intellegat pertinacia. Pri semper regione voluptua ea, ne has aliquip virtute. Eu sea veniam volumus omittantur, soleat ponderum argumentum cu usu, nam ut nostrud admodum pritncipes.</p>
-
-        <ul>
-          <li>Bullet 1</li>
-          <li>Bullet 2</li>
-          <li>Bullet 3</li>
-        </ul>
-
-        <img src="images/placeholder.png" alt="" class="placeholder" cs-placeholder />
-      </div>
-
-      <div class="content">
-        <a href="" class="button" cs-editable="button" cs-format="bold,italic" cs-button>
-          Click Here To Enter
-        </a>
-      </div>
-    </div>
-
-    <div class="partners-wrap" cs-editable="partners" cs-format="bold,italic,underline,justifyLeft,justifyCenter,justifyRight">
-      <p class="with">In partnership with:</p>
-      <div class="partners">
-        <a href="">AngularJS</a>
-        <a href="">GruntJS</a>
-        <a href="">NodeJS</a>
-      </div>
-    </div>
-
-  </div>
+  }
+</style>
+  <table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-wrap">
+    <tbody><tr>
+      <td align="center">
+        <br>
+        <table border="0" width="500" cellpadding="0" cellspacing="0" class="container table-content">
+          <tbody><tr>
+            <td class="container-padding header logo-cell" align="left" cs-editable="header" cs-format="bold,italic,underline,justifyLeft,justifyCenter,justifyRight,placeholder,link">
+              <h1 class="content-title">Your Logo</h1>
+            </td>
+          </tr>
+          <tr>
+            <td class="content-cell" cs-editable="content" cs-format="bold,italic,underline,justifyLeft,justifyCenter,justifyRight,placeholder,link">
+              <div class="content-title cs-primary-color">Trending In Sports</div>
+              <br>
+              <div><img src="images/placeholder.png" class="placeholder" alt="placeholder" cs-placeholder></div>
+              <br>
+              <div>Vis at admodum epicurei honestatis. Eam ea noluisse intellegat pertinacia. Pri semper regione voluptua ea, ne has aliquip virtute. Eu sea veniam volumus omittantur, soleat ponderum argumentum cu usu, nam ut nostrud admodum pritncipes.</div>
+              <ul>
+                <li>Bullet 1</li>
+                <li>Bullet 2</li>
+                <li>Bullet 3</li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td class="button-cell">
+              <a href="http://" class="button cs-primary-bg cs-primary-shadow" cs-editable="button" cs-format="bold,italic" cs-button>
+                Click Here To Enter
+              </a>
+              <br><br>
+            </td>
+          </tr>
+          <tr>
+            <td class="partner-cell">
+              <div class="partners-wrap" cs-editable="partners" cs-format="bold,italic,underline,justifyLeft,justifyCenter,justifyRight">
+                <p class="with">In partnership with:</p>
+                <div class="partners">
+                  <a href="http://">AngularJS</a>
+                  <a href="http://">GruntJS</a>
+                  <a href="http://">NodeJS</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody></table>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>

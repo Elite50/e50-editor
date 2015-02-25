@@ -33,6 +33,7 @@ angular.module('E50Editor')
           });
           btns.unbind('mouseup', clickBtnHandler);
           btns.bind('mouseup', clickBtnHandler);
+          scope.$emit('updateViewValue');
         }
 
         function clickBtnHandler(e) {

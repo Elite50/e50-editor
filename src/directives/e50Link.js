@@ -37,6 +37,7 @@ angular.module('E50Editor')
             link.unbind('mouseup', clickLinkHandler);
             link.bind('mouseup', clickLinkHandler);
           });
+          scope.$emit('updateViewValue');
         }
 
         function clickLinkHandler(e) {
