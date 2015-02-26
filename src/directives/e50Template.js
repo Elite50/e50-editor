@@ -11,11 +11,8 @@ angular.module('E50Editor')
         ngModel.$setViewValue(elm.html());
       }
 
-      var numOfEditables = 0;
       function setupEditableAreas() {
         var editables = elm.find('['+E50EditorConfig.attrs.editable+']');
-        if(numOfEditables === editables.length) { return; }
-        numOfEditables = editables.length;
         scope.buttons = {};
         angular.forEach(editables, function (editable, i) {
           editable = angular.element(editable);
