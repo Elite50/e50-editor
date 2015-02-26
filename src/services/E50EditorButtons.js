@@ -78,7 +78,7 @@ angular.module('E50Editor')
     buttons[style] = new StyleCommand(style);
   });
 
-  buttons['placeholder'] = new InsertCommand('placeholder', '<img src="'+E50EditorConfig.placeholder+'" class="placeholder" alt="Placeholder"/>');
+  buttons['placeholder'] = new InsertCommand('placeholder', '<img src="'+E50EditorConfig.placeholder+'" class="placeholder" alt="Placeholder" cs-placeholder/>');
   buttons['link']        = new LinkCommand();
 
   // Expose the commands, so ppl can add there own later
