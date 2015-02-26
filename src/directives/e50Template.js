@@ -28,9 +28,15 @@ angular.module('E50Editor')
         ngModel.$setViewValue(elm.html());
       }
 
+      var calledOnce = false;
       scope.$watch('html', function(newV, oldV) {
-        if(!newV && newV === oldV) { return false; }
+        if(!newV && newV === oldV || calledOnce) { return false; }
         setupEditableAreas();
+        calledOnce = true;
+      });
+
+      scope.$on('e50RefreshEditables', function() {
+        calledOnce = false;
       });
 
       // On mousedown, toggle focused property for each editable area

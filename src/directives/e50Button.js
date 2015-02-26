@@ -79,7 +79,7 @@ angular.module('E50Editor')
         getButtons();
 
         scope.$watch('html', function() {
-          getButtons();
+          //getButtons();
         });
 
         // Close btn managers if we clicked away
