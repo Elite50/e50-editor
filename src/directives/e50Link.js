@@ -67,6 +67,9 @@ angular.module('E50Editor')
             extraWidth += parseInt(target.css('margin-right'));
 
             offset.left = Math.ceil(offset.left) + target.width() - elm.width() + extraWidth;
+            if(offset.left < 0) {
+              offset.left = 5;
+            }
             elm.css(offset);
 
             elm.animate({
