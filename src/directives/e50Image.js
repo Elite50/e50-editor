@@ -150,7 +150,6 @@ angular.module('E50Editor')
             var isPlaceholder = true;
             if(!src) {
               var placeholderSrc = E50EditorConfig.placeholder.replace('WIDTH', width).replace('HEIGHT', height);
-              console.log(placeholderSrc);
               imgElm.attr('src', placeholderSrc);
               imgElm.css("border", "1px solid #e7e7e7");
               isPlaceholder = true;
