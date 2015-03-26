@@ -34,7 +34,22 @@ angular.module('E50Editor')
           });
           btns.unbind('mouseup', clickBtnHandler);
           btns.bind('mouseup', clickBtnHandler);
+
+          var inputs = elm.find('input');
+          inputs.unbind('keypress', keypressHandler);
+          inputs.bind('keypress', keypressHandler);
+
           scope.$emit('updateViewValue');
+        }
+
+        function keypressHandler(e) {
+          var target = angular.element(e.target);
+          var elmScope = target.scope();
+          var btnId = elmScope.btn.id;
+          var button = elm.parent().find('[cs-button="'+btnId+'"]');
+          $timeout(function () {
+            button.attr('href', elmScope.btn.link);
+          });
         }
 
         function clickBtnHandler(e) {
@@ -43,6 +58,7 @@ angular.module('E50Editor')
           if(!isBtn) {
             target = target.closest('['+E50EditorConfig.attrs.button+']');
           }
+
           var id = parseInt(target.attr(E50EditorConfig.attrs.button),10);
 
           angular.forEach(scope.csButtons, function(btn) {
