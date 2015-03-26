@@ -351,10 +351,15 @@ angular.module('E50Editor')
             images[i] = image;
             var imgElm = angular.element(image);
             imgElm.attr(E50EditorConfig.attrs.placeholder, i);
+            var width = imgElm.attr("width") || E50EditorConfig.defaultWidth;
+            var height = imgElm.attr('height') || E50EditorConfig.defaultHeight;
             var src = imgElm.attr('src');
             var isPlaceholder = true;
             if(!src) {
-              imgElm.attr('src', E50EditorConfig.placeholder);
+              var placeholderSrc = E50EditorConfig.placeholder.replace('WIDTH', width).replace('HEIGHT', height);
+              console.log(placeholderSrc);
+              imgElm.attr('src', placeholderSrc);
+              imgElm.css("border", "1px solid #e7e7e7");
               isPlaceholder = true;
             } else {
               isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
@@ -919,7 +924,9 @@ angular.module('E50Editor')
   .factory('E50EditorConfig', function() {
     return {
       fontAwesome: '../bower_components/font-awesome/css/font-awesome.css',
-      placeholder: 'images/placeholder.png',
+      placeholder: 'http://placehold.it/WIDTHxHEIGHT/f7f7f7/ccc',
+      defaultWidth: 418,
+      defaultHeight: 178,
       aviaryKey: null,
       attrs: {
         editable: 'cs-editable',

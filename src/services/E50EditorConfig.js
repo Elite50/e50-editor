@@ -2,7 +2,9 @@ angular.module('E50Editor')
   .factory('E50EditorConfig', function() {
     return {
       fontAwesome: '../bower_components/font-awesome/css/font-awesome.css',
-      placeholder: 'images/placeholder.png',
+      placeholder: 'http://placehold.it/WIDTHxHEIGHT/f7f7f7/ccc',
+      defaultWidth: 418,
+      defaultHeight: 178,
       aviaryKey: null,
       attrs: {
         editable: 'cs-editable',
