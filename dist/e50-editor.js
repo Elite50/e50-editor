@@ -326,7 +326,7 @@ angular.module('E50Editor')
           }
           var imageElm = angular.element(images[img.id]);
           var src = imageElm.attr('src');
-          var isPlaceholder = src.indexOf(E50EditorConfig.placeholder) !== -1;
+          var isPlaceholder = scope.isPlaceholder(img);
           if(isPlaceholder) { return false; }
 
           var aviaryImg = new Image();
@@ -353,8 +353,8 @@ angular.module('E50Editor')
           if(!scope.isPlaceholder(img)) {
             var confirm = window.confirm("Are you sure you want to delete this image?");
             if(!confirm) { return false; }
-            var width = imgElm.attr("width") || E50EditorConfig.defaultWidth;
-            var height = imgElm.attr('height') || E50EditorConfig.defaultHeight; 
+            var width = elm.attr("width") || E50EditorConfig.defaultWidth;
+            var height = elm.attr('height') || E50EditorConfig.defaultHeight; 
             var placeholderSrc = E50EditorConfig.placeholder.replace('WIDTH', width).replace('HEIGHT', height);           
             elm.attr('src', placeholderSrc);
           } else {
