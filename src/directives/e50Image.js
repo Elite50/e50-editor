@@ -122,7 +122,7 @@ angular.module('E50Editor')
         scope.isPlaceholder = function(img) {
           var elm = angular.element(images[img.id]);
           var src = elm.attr('src');
-          return src.indexOf(E50EditorConfig.placeholder) !== -1;
+          return src.indexOf('placehold.it') !== -1;
         };
 
         scope.trash = function(img) {
@@ -130,7 +130,10 @@ angular.module('E50Editor')
           if(!scope.isPlaceholder(img)) {
             var confirm = window.confirm("Are you sure you want to delete this image?");
             if(!confirm) { return false; }
-            elm.attr('src', E50EditorConfig.placeholder);
+            var width = imgElm.attr("width") || E50EditorConfig.defaultWidth;
+            var height = imgElm.attr('height') || E50EditorConfig.defaultHeight; 
+            var placeholderSrc = E50EditorConfig.placeholder.replace('WIDTH', width).replace('HEIGHT', height);           
+            elm.attr('src', placeholderSrc);
           } else {
             elm.remove();
           }
