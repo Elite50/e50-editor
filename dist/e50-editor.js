@@ -435,8 +435,6 @@ angular.module('E50Editor')
 
         function fileChangeHandler(e) {
           var input = angular.element(e.target);
-          var imgId = input.attr('id').split('-').pop();
-          var img = angular.element(images[imgId]);
           var aviaryImg = new Image();
           var file = e.target.files[0];
           var reader = new FileReader();
