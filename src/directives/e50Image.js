@@ -211,6 +211,7 @@ angular.module('E50Editor')
         };
 
         function fileChangeHandler(e) {
+          if(!e.target.files) { return; }
           var input = angular.element(e.target);
           var aviaryImg = new Image();
           var file = e.target.files[0];
