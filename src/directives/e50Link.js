@@ -26,6 +26,7 @@ angular.module('E50Editor')
           var links = elm.parent().find('[e50-template]').find('a');
           angular.forEach(links, function(link, i) {
             link = angular.element(link);
+            link.attr('contenteditable', true);
             if(link.attr(E50EditorConfig.attrs.editable)) { return false; }
             linkElms[i] = link;
             link.attr(E50EditorConfig.attrs.link, i);
