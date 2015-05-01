@@ -497,7 +497,7 @@ angular.module('E50Editor')
           angular.forEach(links, function(link, i) {
             link = angular.element(link);
             link.attr('contenteditable', true);
-            if(link.attr(E50EditorConfig.attrs.editable)) { return false; }
+            if(link.attr(E50EditorConfig.attrs.button)) { return false; }
             linkElms[i] = link;
             link.attr(E50EditorConfig.attrs.link, i);
             scope.links[i] = {
