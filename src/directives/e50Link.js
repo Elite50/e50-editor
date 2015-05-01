@@ -43,42 +43,44 @@ angular.module('E50Editor')
         }
 
         function clickLinkHandler(e) {
-          var target = angular.element(e.target);
-          var isLink = e.target.tagName.toLowerCase() === 'a';
-          if(!isLink) {
-            target = target.closest('a');
-          }
-          var id = parseInt(target.attr(E50EditorConfig.attrs.link),10);
-
-          angular.forEach(scope.links, function(link) {
-            link.show = link.id === id;
-          });
-
-          elm.css({
-            opacity: 0,
-            position:'absolute'
-          });
-
-          $timeout(function() {
-
-            var offset = target.offset();
-            offset.top = Math.ceil(offset.top) - elm.height() - 10;
-
-            var extraWidth = 0;
-            extraWidth += parseInt(target.css('padding-right'));
-            extraWidth += parseInt(target.css('margin-right'));
-
-            offset.left = Math.ceil(offset.left) + target.width() - elm.width() + extraWidth;
-            if(offset.left < 0) {
-              offset.left = 5;
+          $timeout(function () {
+            var target = angular.element(e.target);
+            var isLink = e.target.tagName.toLowerCase() === 'a';
+            if(!isLink) {
+              target = target.closest('a');
             }
-            elm.css(offset);
+            var id = parseInt(target.attr(E50EditorConfig.attrs.link),10);
 
-            elm.animate({
-              top: offset.top + 5,
-              opacity: 1
-            }, 200);
-          });
+            angular.forEach(scope.links, function(link) {
+              link.show = link.id === id;
+            });
+
+            elm.css({
+              opacity: 0,
+              position:'absolute'
+            });
+
+            $timeout(function() {
+
+              var offset = target.offset();
+              offset.top = Math.ceil(offset.top) - elm.height() - 10;
+
+              var extraWidth = 0;
+              extraWidth += parseInt(target.css('padding-right'));
+              extraWidth += parseInt(target.css('margin-right'));
+
+              offset.left = Math.ceil(offset.left) + target.width() - elm.width() + extraWidth;
+              if(offset.left < 0) {
+                offset.left = 5;
+              }
+              elm.css(offset);
+
+              elm.animate({
+                top: offset.top + 5,
+                opacity: 1
+              }, 200);
+            });
+          }, 50);
         }
 
         getLinks();
