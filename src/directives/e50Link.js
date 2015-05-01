@@ -35,6 +35,7 @@ angular.module('E50Editor')
               show: false,
               link: link.attr('href') || 'http://'
             };
+            scope.setLink(scope.links[i]);
             link.unbind('mouseup', clickLinkHandler);
             link.bind('mouseup', clickLinkHandler);
           });
@@ -83,7 +84,9 @@ angular.module('E50Editor')
         getLinks();
 
         scope.$watch('html', function() {
-          getLinks();
+          $timeout(function () {
+            getLinks();
+          });
         });
 
         // Close link managers if we clicked away
