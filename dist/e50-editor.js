@@ -446,6 +446,8 @@ angular.module('E50Editor')
         function fileChangeHandler(e) {
           if(!e.target.files) { return; }
           var input = angular.element(e.target);
+          var id = input.attr('id').split('-').pop();
+          var imageElm = angular.element(images[id]);
           var aviaryImg = new Image();
           var file = e.target.files[0];
           var reader = new FileReader();
@@ -454,7 +456,7 @@ angular.module('E50Editor')
             aviaryEditor.launch({
               image: aviaryImg,
               onSave: function(id, url) {
-                scope.imageSaved(url, aviaryImg);
+                scope.imageSaved(url, imageElm);
                 input.val("");
                 scope.$emit('updateViewValue');
               },

@@ -43,6 +43,7 @@ app.controller('MainCtrl', function($scope, $http, $interval) {
   };
 
   $scope.imageSaved = function(url, image) {
+    console.log(arguments)
     image.attr('src', url);
   };
 
