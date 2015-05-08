@@ -318,7 +318,7 @@ angular.module('E50Editor')
             aviaryEditor.launch({
               image: aviaryImg,
               onSave: function(id, url) {
-                scope.imageSaved(url, img);
+                scope.imageSaved(url, aviaryImg);
                 img.attr('src', url);
                 scope.$emit('updateViewValue');
               }
