@@ -98,6 +98,8 @@ angular.module('E50Editor')
           getButtons();
         });
 
+        scope.$on('e50RefreshEditables', getButtons);
+
         // Close btn managers if we clicked away
         elm.parent().bind('mousedown', function(e) {
           var btnManager = angular.element(e.target).closest('.link-manager');
