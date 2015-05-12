@@ -188,6 +188,8 @@ angular.module('E50Editor')
           getImages();
         });
 
+        scope.$on('e50RefreshEditables', getImages);
+
         scope.toggleInput = function(img) {
           var imageElm = angular.element(images[img.id]);
           img.showInput = !img.showInput;
