@@ -98,6 +98,9 @@ body {
 //        position:absolute;
 //        top: -6px;
 //        left: 18px;
+        -webkit-user-select: none;
+        -moz-user-select: -moz-none;
+        -ms-user-select: none;
     }
 
     .live-editor {

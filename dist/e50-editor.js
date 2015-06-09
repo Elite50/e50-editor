@@ -633,6 +633,16 @@ angular.module('E50Editor')
         scope.buttons = {};
         angular.forEach(editables, function (editable, i) {
           editable = angular.element(editable);
+          if(editable[0].nodeName.toLowerCase() === 'td') {
+            var format = editable.attr(E50EditorConfig.attrs.format);
+            editable.removeAttr(E50EditorConfig.attrs.format);
+            editable.removeAttr(E50EditorConfig.attrs.editable);
+            var div = angular.element('<div/>');
+            div.html(editable.html());
+            div.attr(E50EditorConfig.attrs.format, format);
+            editable.html(div);
+            editable = div;
+          }
           editable.attr('contenteditable', true);
           editable.attr(E50EditorConfig.attrs.editable, i);
           var focused = scope.buttons[i] ? scope.buttons[i].focused : false;
@@ -768,7 +778,7 @@ angular.module('E50Editor')
   var template = [
     '<div class="toolbars" ng-if="!override">',
       '<div class="group" ng-repeat="(key,editable) in buttons" ng-show="editable.focused">',
-        '<button type="button" unselectable="on" ng-repeat="btn in editable.buttons" class="format-button" ng-click="execute(btn)" ng-bind-html="name(btn)" ng-class="{active:isActive(btn)}"></button>',
+        '<button type="button" unselectable="on" ng-repeat="btn in editable.buttons" class="format-button" ng-click="execute($event,btn)" ng-bind-html="name(btn)" ng-class="{active:isActive(btn)}"></button>',
       '</div>',
     '</div>'
   ];
@@ -818,7 +828,9 @@ angular.module('E50Editor')
       };
 
       // Execute the button
-      scope.execute = function(tag) {
+      scope.execute = function(e, tag) {
+        console.log(e);
+        //e.preventDefault();
         return command(tag).execute();
       };
     }
@@ -902,7 +914,7 @@ angular.module('E50Editor')
     };
     this.execute = function() {
       var doc = this.iframe[0].document || this.iframe[0].contentWindow.document || document;
-      doc.execCommand(tag);
+      doc.execCommand(tag, false, null);
     };
     this.setDocument = setDocument;
   }

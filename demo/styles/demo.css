@@ -67,6 +67,10 @@ body {
   font-size: 12px;
   text-decoration: none;
   color: #333; }
+.e50-editor .format-buttons {
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none; }
 .e50-editor .live-editor.drag-enter img.placeholder:hover {
   opacity: 0.8; }
 

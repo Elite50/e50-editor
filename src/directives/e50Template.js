@@ -16,6 +16,16 @@ angular.module('E50Editor')
         scope.buttons = {};
         angular.forEach(editables, function (editable, i) {
           editable = angular.element(editable);
+          if(editable[0].nodeName.toLowerCase() === 'td') {
+            var format = editable.attr(E50EditorConfig.attrs.format);
+            editable.removeAttr(E50EditorConfig.attrs.format);
+            editable.removeAttr(E50EditorConfig.attrs.editable);
+            var div = angular.element('<div/>');
+            div.html(editable.html());
+            div.attr(E50EditorConfig.attrs.format, format);
+            editable.html(div);
+            editable = div;
+          }
           editable.attr('contenteditable', true);
           editable.attr(E50EditorConfig.attrs.editable, i);
           var focused = scope.buttons[i] ? scope.buttons[i].focused : false;

@@ -36,7 +36,7 @@ angular.module('E50Editor')
     };
     this.execute = function() {
       var doc = this.iframe[0].document || this.iframe[0].contentWindow.document || document;
-      doc.execCommand(tag);
+      doc.execCommand(tag, false, null);
     };
     this.setDocument = setDocument;
   }

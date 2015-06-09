@@ -4,7 +4,7 @@ angular.module('E50Editor')
   var template = [
     '<div class="toolbars" ng-if="!override">',
       '<div class="group" ng-repeat="(key,editable) in buttons" ng-show="editable.focused">',
-        '<button type="button" unselectable="on" ng-repeat="btn in editable.buttons" class="format-button" ng-click="execute(btn)" ng-bind-html="name(btn)" ng-class="{active:isActive(btn)}"></button>',
+        '<button type="button" unselectable="on" ng-repeat="btn in editable.buttons" class="format-button" ng-click="execute($event,btn)" ng-bind-html="name(btn)" ng-class="{active:isActive(btn)}"></button>',
       '</div>',
     '</div>'
   ];
@@ -54,7 +54,9 @@ angular.module('E50Editor')
       };
 
       // Execute the button
-      scope.execute = function(tag) {
+      scope.execute = function(e, tag) {
+        console.log(e);
+        //e.preventDefault();
         return command(tag).execute();
       };
     }
