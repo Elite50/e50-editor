@@ -224,12 +224,13 @@ angular.module('E50Editor')
         }
 
         // Firefox fix
-        iframe.load(function () {
+        if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+            iframe.load(function () {
+                initIframe();
+            });
+        } else {
             initIframe();
-        });
-
-        initIframe();
-
+        }
       }
     };
   }]);
