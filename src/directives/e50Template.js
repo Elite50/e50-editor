@@ -123,7 +123,9 @@ angular.module('E50Editor')
         var elm = angular.element(html);
         var scripts = elm.find('script');
         scripts.remove();
-        return elm[0].outerHTML;
+        if(elm[0]) {
+          return elm[0].outerHTML;
+        }
       });
 
       // On every keyup, sync the view with the model (scope.html) only if we are in view mode
