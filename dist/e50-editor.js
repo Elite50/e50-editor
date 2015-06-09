@@ -225,6 +225,7 @@ angular.module('E50Editor')
 
         // Firefox fix
         if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+            initIframe();
             iframe.load(function () {
                 initIframe();
             });
