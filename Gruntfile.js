@@ -48,6 +48,19 @@ module.exports = function(grunt) {
         },
         files: ['src/**/*.js', 'demo/*.html', 'demo/*.js', 'Gruntfile.js', 'demo/**/*.scss', 'src/scss/*.scss'],
         tasks: ['default']
+      },
+      use: {
+        options: {
+          livereload: 2342
+        },
+        files: ['demo/*.css', 'src/**/*.js', 'demo/*.html', 'demo/*.js', 'Gruntfile.js'],
+        tasks: ['use']
+      }
+    },
+    copy: {
+      use: {
+        src: 'dist/*',
+        dest: grunt.option('dest')
       }
     }
   });
@@ -57,6 +70,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-ng-annotate');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.registerTask('default', [
     'html2js',
@@ -68,5 +82,15 @@ module.exports = function(grunt) {
   grunt.registerTask('dev', [
     'default',
     'watch'
+  ]);
+
+  grunt.registerTask('use', [
+    'default',
+    'copy:use'
+  ]);
+
+  grunt.registerTask('use:watch', [
+    'use',
+    'watch:use'
   ]);
 };

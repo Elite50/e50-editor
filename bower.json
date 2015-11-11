@@ -1,9 +1,9 @@
 {
   "name": "e50-editor",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://github.com/Elite50/e50-editor",
   "authors": [
-    "JP <jsniezek@crowdskout.com>"
+    "JP <jsniezek@crowdskout.com>", "James <james@crowdskout.com>"
   ],
   "description": "AngularJS text editor",
   "license": "MIT",

@@ -966,7 +966,7 @@ angular.module('E50Editor')
     .replace('WIDTH', E50EditorConfig.defaultWidth)
     .replace('HEIGHT', E50EditorConfig.defaultHeight);
 
-  buttons['placeholder'] = new InsertCommand('placeholder', '<img src="'+placeholderSrc+'" class="placeholder" alt="Placeholder" cs-placeholder style="border: 1px solid rgb(231, 231, 231);"/>');
+  buttons['placeholder'] = new InsertCommand('placeholder', '<img src="'+placeholderSrc+'" class="placeholder" cs-placeholder style="border: 1px solid rgb(231, 231, 231);"/>');
   buttons['link']        = new LinkCommand();
 
   // Expose the commands, so ppl can add there own later
