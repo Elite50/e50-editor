@@ -243,7 +243,7 @@ angular.module('E50Editor')
           '<a href="" ng-click="toggleInput(img)" class="edit"><i class="fa  fa-ellipsis-v"></i></a>',
           '<a href="" class="trash"><i class="fa fa-trash-o" ng-click="trash(img)"></i></a>',
           '<form ng-submit="setImageUrl(img)">',
-            '<input type="text" ng-model="img.src" placeholder="Enter url & hit enter or" ng-if="img.showInput" ng-change="setImageUrl(img)"/>',
+            '<input type="text" placeholder="Enter url & hit enter or" ng-model="img.src" ng-model-options="{ debounce: 3500 }" ng-if="img.showInput" ng-change="setImageUrl(img)"/>',
             '<a href="" ng-click="openAviary(img)" class="edit-photo" ng-if="img.showInput">Edit</a>',
           '</form>',
           '<form ng-show="img.showInput">',
@@ -370,8 +370,8 @@ angular.module('E50Editor')
             var confirm = window.confirm("Are you sure you want to delete this image?");
             if(!confirm) { return false; }
             var width = elm.attr("width") || E50EditorConfig.defaultWidth;
-            var height = elm.attr('height') || E50EditorConfig.defaultHeight; 
-            var placeholderSrc = E50EditorConfig.placeholder.replace('WIDTH', width).replace('HEIGHT', height);           
+            var height = elm.attr('height') || E50EditorConfig.defaultHeight;
+            var placeholderSrc = E50EditorConfig.placeholder.replace('WIDTH', width).replace('HEIGHT', height);
             elm.attr('src', placeholderSrc);
           } else {
             elm.remove();
@@ -488,6 +488,7 @@ angular.module('E50Editor')
       }
     };
   }]);
+
 angular.module('E50Editor')
   .directive('e50Link', ["$timeout", "E50EditorConfig", "E50Documents", function($timeout, E50EditorConfig, E50Documents) {
 

@@ -17,7 +17,7 @@ module.exports = function(grunt) {
         src: ['src/views/*.html'],
         dest: 'src/tpl/e50-templates.js'
       },
-    },      
+    },
     uglify: {
       options: {
         stripBanners: true,
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
     },
     copy: {
       use: {
-        src: 'dist/*',
+        src: ['dist/*', 'src/**/*'],
         dest: grunt.option('dest')
       }
     }
