@@ -6,7 +6,7 @@ angular.module('E50Editor')
           '<a href="" ng-click="toggleInput(img)" class="edit"><i class="fa  fa-ellipsis-v"></i></a>',
           '<a href="" class="trash"><i class="fa fa-trash-o" ng-click="trash(img)"></i></a>',
           '<form ng-submit="setImageUrl(img)">',
-            '<input type="text" placeholder="Enter url & hit enter or" ng-model="img.src" ng-model-options="{ debounce: 3500 }" ng-if="img.showInput" ng-change="setImageUrl(img)"/>',
+            '<input type="text" placeholder="Enter url & hit enter or" ng-model="img.src" ng-model-options="{ updateOn: 'blur' }" ng-if="img.showInput" ng-change="setImageUrl(img)"/>',
             '<a href="" ng-click="openAviary(img)" class="edit-photo" ng-if="img.showInput">Edit</a>',
           '</form>',
           '<form ng-show="img.showInput">',
