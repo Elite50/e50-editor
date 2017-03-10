@@ -4,7 +4,7 @@ angular.module('E50Editor')
 
     var template = [
       '<div class="link-manager" ng-repeat="btn in csButtons" ng-show="btn.show && !toggle">',
-      '<form ng-submit="setBtnLink(btn)"><input type="text" ng-model="btn.link" /></form>',
+      '<form ng-submit="setBtnLink(btn)"><input type="text" ng-model="btn.link" cs-button-id="{{btn.id}}" cs-button-href="{{btn.link}}"/></form>',
       '<a href="" target="_blank" ng-attr-href="{{btn.link}}">Open</a>',
       '</div>'
     ];
@@ -44,11 +44,10 @@ angular.module('E50Editor')
 
         function keypressHandler(e) {
           var target = angular.element(e.target);
-          var elmScope = target.scope();
-          var btnId = elmScope.btn.id;
+          var btnId = target.attr('cs-button-id');
           var button = elm.parent().find('[cs-button="'+btnId+'"]');
           $timeout(function () {
-            button.attr('href', elmScope.btn.link);
+            button.attr('href', target.attr('cs-button-href'));
           });
         }
 
@@ -120,6 +119,7 @@ angular.module('E50Editor')
       }
     };
   }]);
+
 angular.module('E50Editor')
 .directive('e50Editor', function() {
 
